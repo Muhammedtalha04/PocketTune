@@ -31,7 +31,7 @@ public final class PocketTuneServerLifecycle {
                 return;
             }
             String reason = ytDlp.errorMessage().isBlank()
-                    ? "yt-dlp bulunamadı."
+                    ? "yt-dlp was not found."
                     : ytDlp.errorMessage();
             String safeSummary = PlaybackFailureMessages.safeLogSummary(
                     new ExternalProcessException(reason)

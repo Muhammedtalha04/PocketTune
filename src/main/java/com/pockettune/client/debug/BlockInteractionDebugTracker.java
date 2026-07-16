@@ -192,9 +192,9 @@ public final class BlockInteractionDebugTracker {
         graphics.fill(x + 2, y + 2, x + width + 2, y + height + 2, 0x80000000);
         graphics.fill(x, y, x + width, y + height, 0xE0101512);
         graphics.fill(x, y, x + 3, y + height, 0xFF72C900);
-        graphics.drawString(font, "POCKETTUNE BLOK DEBUG", x + 9, y + 6, 0xFF72C900, false);
+        graphics.drawString(font, "POCKETTUNE BLOCK DEBUG", x + 9, y + 6, 0xFF72C900, false);
         TraceEntry latest = entries.getLast();
-        String summary = "İşlem " + shortRequest(latest.requestId()) + " • " + latest.pos().toShortString();
+        String summary = "Request " + shortRequest(latest.requestId()) + " • " + latest.pos().toShortString();
         graphics.drawString(font, ellipsize(font, summary, width - 18), x + 9, y + 17, 0xFFB6C0B8, false);
 
         int lineY = y + 29;
@@ -223,7 +223,7 @@ public final class BlockInteractionDebugTracker {
     }
 
     private static String shortRequest(UUID requestId) {
-        return NO_REQUEST.equals(requestId) ? "yaşam" : requestId.toString().substring(0, 8);
+        return NO_REQUEST.equals(requestId) ? "lifecycle" : requestId.toString().substring(0, 8);
     }
 
     private static String stateName(boolean speakerPresent) {

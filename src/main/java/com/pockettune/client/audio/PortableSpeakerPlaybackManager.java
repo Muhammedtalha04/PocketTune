@@ -91,7 +91,7 @@ public final class PortableSpeakerPlaybackManager {
                     sourcePos,
                     BlockInteractionTracePayload.Stage.CLIENT_ROLLBACK,
                     false,
-                    "Eşleşen taşınabilir oturum bulunamadı"
+                    "No matching portable session was found"
             );
             return;
         }
@@ -103,7 +103,7 @@ public final class PortableSpeakerPlaybackManager {
                 sourcePos,
                 BlockInteractionTracePayload.Stage.CLIENT_ROLLBACK,
                 true,
-                "Controller mevcut bloğa geri bağlanıyor"
+                "Controller is reattaching to the current block"
         );
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.level != null
@@ -141,10 +141,10 @@ public final class PortableSpeakerPlaybackManager {
                 BlockInteractionTracePayload.Stage.CLIENT_CONTROLLER_ATTACHED,
                 transferred.controller() == null || controllerAccepted,
                 transferred.controller() == null
-                        ? "Canlı controller yok; blok gerektiğinde yeniden başlatacak"
+                        ? "No live controller; the block will restart it when needed"
                         : controllerAccepted
-                                ? "Canlı mpv controller yeni BlockEntity'ye aktarıldı"
-                                : "Controller devri reddedildi; blok güvenli biçimde yeniden başlatacak"
+                                ? "Live mpv controller transferred to the new BlockEntity"
+                                : "Controller transfer rejected; the block will restart it safely"
         );
         SESSIONS.remove(speakerId);
         return AttachmentState.ATTACHED;
@@ -294,8 +294,8 @@ public final class PortableSpeakerPlaybackManager {
                     BlockInteractionTracePayload.Stage.CLIENT_ATTACH_BLOCKED,
                     true,
                     transferGate.pending()
-                            ? "Pickup sonucu beklenirken kaynak BE geri bağlanamadı"
-                            : "Item hâlâ envanterde veya commit henüz gözlenmedi"
+                            ? "The source BlockEntity could not reattach while waiting for the pickup result"
+                            : "The item is still in the inventory or the commit has not been observed yet"
             );
         }
 
@@ -457,7 +457,7 @@ public final class PortableSpeakerPlaybackManager {
                             if (failure != PlaybackStartupGate.FailureResult.STALE) {
                                 startupError = failure == PlaybackStartupGate.FailureResult.TERMINAL
                                         ? PlaybackFailureMessages.forPlayback(exception)
-                                        : "Oynatma hazırlanamadı; otomatik yeniden deneniyor.";
+                                        : "Playback could not be prepared; retrying automatically.";
                             }
                         }
                     }
@@ -526,7 +526,7 @@ public final class PortableSpeakerPlaybackManager {
                 ExternalProcessCancellation requestCancellation
         ) {
             ExternalProcessException rejection = new ExternalProcessException(
-                    "Oynatma başlatma kuyruğu dolu; istek yeniden denenecek."
+                    "The playback startup queue is full; the request will be retried."
             );
             PlaybackStartupGate.FailureResult failure = PlaybackStartupGate.FailureResult.STALE;
             synchronized (ownershipLock) {
@@ -541,7 +541,7 @@ public final class PortableSpeakerPlaybackManager {
                     if (failure != PlaybackStartupGate.FailureResult.STALE) {
                         startupError = failure == PlaybackStartupGate.FailureResult.TERMINAL
                                 ? PlaybackFailureMessages.forPlayback(rejection)
-                                : "Oynatma kuyruğu yoğun; otomatik yeniden deneniyor.";
+                                : "The playback queue is busy; retrying automatically.";
                     }
                 }
             }

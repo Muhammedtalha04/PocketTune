@@ -58,7 +58,7 @@ public final class SpeakerUrlScreen extends Screen {
     private float fade = 1.0F;
 
     public SpeakerUrlScreen(BlockPos speakerPos, UUID speakerInstanceId) {
-        super(Component.literal("PocketTune Hoparlör"));
+        super(Component.literal("PocketTune Speaker"));
         this.speakerPos = speakerPos.immutable();
         this.speakerInstanceId = speakerInstanceId;
         playlist = new PlaylistPanel(this.speakerPos, this.speakerInstanceId);
@@ -81,7 +81,7 @@ public final class SpeakerUrlScreen extends Screen {
                 ? PocketTuneServerConfig.defaultSpeakerSettings()
                 : currentSpeaker.getSettings();
         volumeSlider = addRenderableWidget(slider(0, 0, 100, 0, 100, settings.volumePercent(),
-                value -> "Ses: " + Math.round(value) + "%", SpeakerControlPayload.Action.SET_VOLUME));
+                value -> "Volume: " + Math.round(value) + "%", SpeakerControlPayload.Action.SET_VOLUME));
         rangeSlider = addRenderableWidget(slider(
                 0,
                 0,
@@ -89,10 +89,10 @@ public final class SpeakerUrlScreen extends Screen {
                 SpeakerSettings.MIN_RANGE,
                 PocketTuneServerConfig.maximumRangeBlocks(),
                 settings.rangeBlocks(),
-                value -> "Menzil: " + Math.round(value) + " blok", SpeakerControlPayload.Action.SET_RANGE));
+                value -> "Range: " + Math.round(value) + " blocks", SpeakerControlPayload.Action.SET_RANGE));
         bassSlider = addRenderableWidget(eqSlider("Bass", settings.bassDb(), SpeakerControlPayload.Action.SET_BASS));
         midSlider = addRenderableWidget(eqSlider("Mid", settings.midDb(), SpeakerControlPayload.Action.SET_MID));
-        trebleSlider = addRenderableWidget(eqSlider("Tiz", settings.trebleDb(), SpeakerControlPayload.Action.SET_TREBLE));
+        trebleSlider = addRenderableWidget(eqSlider("Treble", settings.trebleDb(), SpeakerControlPayload.Action.SET_TREBLE));
         quickVolumeSlider = addRenderableWidget(slider(0, 0, 120, 0, 100, settings.volumePercent(),
                 value -> "🔊 " + Math.round(value) + "%", SpeakerControlPayload.Action.SET_VOLUME));
         layout();
@@ -249,9 +249,9 @@ public final class SpeakerUrlScreen extends Screen {
                 new SidebarNavigation.BlockStatus(
                         minecraft != null && minecraft.level != null
                                 && minecraft.level.hasChunk(speakerPos.getX() >> 4, speakerPos.getZ() >> 4)
-                                ? "Yüklü" : "Yüklü Değil",
-                        speaker == null ? "Durdu" : speaker.getPlaybackStatus(),
-                        "Konum: " + speakerPos.getX() + ", " + speakerPos.getY() + ", " + speakerPos.getZ()
+                                ? "Loaded" : "Not Loaded",
+                        speaker == null ? "Stopped" : speaker.getPlaybackStatus(),
+                        "Position: " + speakerPos.getX() + ", " + speakerPos.getY() + ", " + speakerPos.getZ()
                 ));
         playlist.update(queue, index);
         if (!compact) {
@@ -354,12 +354,12 @@ public final class SpeakerUrlScreen extends Screen {
         GuiTheme.panel(graphics, compactContentBounds);
         int x = compactContentBounds.x() + 14;
         int y = compactContentBounds.y() + 16;
-        graphics.drawString(font, "POCKETTUNE 0.7.0", x, y, GuiTheme.ACCENT, false);
-        graphics.drawString(font, "NeoForge 1.21.4 medya hoparlörü", x, y + 18, GuiTheme.TEXT, false);
-        graphics.drawString(font, "• yt-dlp ile güvenli playlist çözümleme", x, y + 38, GuiTheme.MUTED, false);
-        graphics.drawString(font, "• mpv IPC ile gerçek zamanlı kontrol", x, y + 52, GuiTheme.MUTED, false);
+        graphics.drawString(font, "POCKETTUNE 0.7.1", x, y, GuiTheme.ACCENT, false);
+        graphics.drawString(font, "NeoForge 1.21.4 media speaker", x, y + 18, GuiTheme.TEXT, false);
+        graphics.drawString(font, "• Secure playlist resolution through yt-dlp", x, y + 38, GuiTheme.MUTED, false);
+        graphics.drawString(font, "• Real-time control through mpv IPC", x, y + 52, GuiTheme.MUTED, false);
         graphics.drawString(font, "• Server-authoritative multiplayer state", x, y + 66, GuiTheme.MUTED, false);
-        graphics.drawString(font, "ESC: arayüzü kapatır; müzik sürer", x, y + 90, GuiTheme.TEXT, false);
+        graphics.drawString(font, "ESC closes the interface; music continues", x, y + 90, GuiTheme.TEXT, false);
     }
 
     private void openAddUrl() {

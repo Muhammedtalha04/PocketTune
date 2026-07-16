@@ -67,29 +67,29 @@ public final class AudioSettingsPanel {
         int x = bounds.x() + 12;
         int width = bounds.width() - 24;
         if (mode == Mode.EQUALIZER) {
-            graphics.drawString(font, "GELİŞMİŞ / EKOLAYZIR", x, bounds.y() + 12, GuiTheme.ACCENT, false);
+            graphics.drawString(font, "ADVANCED / EQUALIZER", x, bounds.y() + 12, GuiTheme.ACCENT, false);
             graphics.drawString(font, "Bass", x, bounds.y() + 29, GuiTheme.TEXT, false);
             graphics.drawString(font, "Mid", x, bounds.y() + 77, GuiTheme.TEXT, false);
-            graphics.drawString(font, "Tiz", x, bounds.y() + 125, GuiTheme.TEXT, false);
+            graphics.drawString(font, "Treble", x, bounds.y() + 125, GuiTheme.TEXT, false);
             return;
         }
-        graphics.drawString(font, "SES AYARLARI", x, bounds.y() + 12, GuiTheme.ACCENT, false);
-        graphics.drawString(font, "Ses Seviyesi", x, bounds.y() + 29, GuiTheme.TEXT, false);
-        graphics.drawString(font, "MENZİL AYARLARI", x, bounds.y() + 76, GuiTheme.ACCENT, false);
-        graphics.drawString(font, "Yayılma Mesafesi", x, bounds.y() + (mode == Mode.AUDIO ? 81 : 91), GuiTheme.TEXT, false);
+        graphics.drawString(font, "AUDIO SETTINGS", x, bounds.y() + 12, GuiTheme.ACCENT, false);
+        graphics.drawString(font, "Volume Level", x, bounds.y() + 29, GuiTheme.TEXT, false);
+        graphics.drawString(font, "RANGE SETTINGS", x, bounds.y() + 76, GuiTheme.ACCENT, false);
+        graphics.drawString(font, "Playback Range", x, bounds.y() + (mode == Mode.AUDIO ? 81 : 91), GuiTheme.TEXT, false);
 
         int fadeY = bounds.y() + (mode == Mode.AUDIO ? 120 : 135);
         drawToggle(graphics, mouseX, mouseY, x, fadeY, width,
-                "Azalma: " + settings.fadeType().displayName(), true);
+                "Attenuation: " + settings.fadeType().displayName(), true);
         drawToggle(graphics, mouseX, mouseY, x, fadeY + 25, width,
-                "Duvar Engellemesi: " + (settings.wallOcclusion() ? "Açık" : "Kapalı"), settings.wallOcclusion());
+                "Wall Occlusion: " + (settings.wallOcclusion() ? "On" : "Off"), settings.wallOcclusion());
 
         // Karıştır/Tekrar kontrolleri yalnız playlist alt barındadır; burada tekrarlanmaz.
         if (mode == Mode.ALL) {
-            graphics.drawString(font, "EKOLAYZIR", x, bounds.y() + 205, GuiTheme.ACCENT, false);
+            graphics.drawString(font, "EQUALIZER", x, bounds.y() + 205, GuiTheme.ACCENT, false);
             graphics.drawString(font, "Bass", x, bounds.y() + 238, GuiTheme.TEXT, false);
             graphics.drawString(font, "Mid", x, bounds.y() + 286, GuiTheme.TEXT, false);
-            graphics.drawString(font, "Tiz", x, bounds.y() + 334, GuiTheme.TEXT, false);
+            graphics.drawString(font, "Treble", x, bounds.y() + 334, GuiTheme.TEXT, false);
         }
     }
 

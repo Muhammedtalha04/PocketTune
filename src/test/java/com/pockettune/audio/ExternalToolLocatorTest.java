@@ -83,14 +83,14 @@ final class ExternalToolLocatorTest {
                         WORKING_DIRECTORY,
                         Optional.of(WORKING_DIRECTORY.resolve("automatic/yt-dlp.exe")),
                         true,
-                        (path, windows) -> ExternalToolLocator.PathValidation.invalid("dosya bulunamadı")
+                        (path, windows) -> ExternalToolLocator.PathValidation.invalid("file not found")
                 )
         );
 
         assertTrue(exception.getMessage().contains(ExternalToolLocator.YT_DLP_CONFIG_KEY));
         assertTrue(exception.getMessage().contains(configuredPath));
-        assertTrue(exception.getMessage().contains("dosya bulunamadı"));
-        assertTrue(exception.getMessage().contains("boş bırakın"));
+        assertTrue(exception.getMessage().contains("file not found"));
+        assertTrue(exception.getMessage().contains("leave it empty"));
         assertEquals(ExternalProcessException.FailureKind.TOOL_MISSING, exception.kind());
     }
 
@@ -105,13 +105,13 @@ final class ExternalToolLocatorTest {
                         WORKING_DIRECTORY,
                         Optional.empty(),
                         false,
-                        (path, windows) -> ExternalToolLocator.PathValidation.invalid("çalıştırma izni yok")
+                        (path, windows) -> ExternalToolLocator.PathValidation.invalid("not executable")
                 )
         );
 
         assertTrue(exception.getMessage().contains(ExternalToolLocator.MPV_CONFIG_KEY));
         assertTrue(exception.getMessage().contains(configuredPath));
-        assertTrue(exception.getMessage().contains("çalıştırma izni yok"));
+        assertTrue(exception.getMessage().contains("not executable"));
         assertEquals(ExternalProcessException.FailureKind.TOOL_MISSING, exception.kind());
     }
 
@@ -131,7 +131,7 @@ final class ExternalToolLocatorTest {
         );
 
         assertTrue(exception.getMessage().contains(ExternalToolLocator.YT_DLP_CONFIG_KEY));
-        assertTrue(exception.getMessage().contains("geçerli bir dosya yolu değil"));
+        assertTrue(exception.getMessage().contains("not a valid filesystem path"));
         assertEquals(ExternalProcessException.FailureKind.TOOL_MISSING, exception.kind());
     }
 }

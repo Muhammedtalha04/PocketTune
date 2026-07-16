@@ -59,7 +59,7 @@ final class ExternalProcessRunner {
             process = new ProcessBuilder(command).start();
         } catch (IOException exception) {
             throw new ExternalProcessException(
-                    "Harici medya aracı başlatılamadı.",
+                    "The external media tool could not be started.",
                     exception,
                     ExternalProcessException.FailureKind.TOOL_MISSING
             );
@@ -114,7 +114,7 @@ final class ExternalProcessRunner {
                 throw cancelledException(exception.getCause());
             }
             throw new ExternalProcessException(
-                    "Harici medya aracının çıktısı okunamadı.",
+                    "The external media tool output could not be read.",
                     exception.getCause(),
                     ExternalProcessException.FailureKind.GENERAL
             );
@@ -131,7 +131,7 @@ final class ExternalProcessRunner {
         } catch (RuntimeException exception) {
             abortProcessExecution(process, stdout, stderr);
             throw new ExternalProcessException(
-                    "Harici medya aracı işlemi tamamlanamadı.",
+                    "The external media tool operation could not be completed.",
                     exception,
                     ExternalProcessException.FailureKind.GENERAL
             );
@@ -292,7 +292,7 @@ final class ExternalProcessRunner {
 
     private static ExternalProcessException cancelledException(Throwable cause) {
         return new ExternalProcessException(
-                "Harici medya aracının çalışması iptal edildi.",
+                "The external media tool operation was cancelled.",
                 cause,
                 ExternalProcessException.FailureKind.CANCELLED
         );
@@ -306,7 +306,7 @@ final class ExternalProcessRunner {
             return cancelledException(cause);
         }
         return new ExternalProcessException(
-                "Harici medya aracı zaman aşımına uğradı.",
+                "The external media tool timed out.",
                 cause,
                 ExternalProcessException.FailureKind.TIMEOUT
         );

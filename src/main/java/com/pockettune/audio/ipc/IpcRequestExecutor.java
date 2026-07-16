@@ -47,20 +47,20 @@ final class IpcRequestExecutor {
             abortQuietly(abort);
             future.cancel(true);
             throw new ExternalProcessException(
-                    "mpv IPC isteği zaman aşımına uğradı; kilitlenen bağlantı kapatıldı.",
+                    "The mpv IPC request timed out; the stalled connection was closed.",
                     exception
             );
         } catch (InterruptedException exception) {
             abortQuietly(abort);
             future.cancel(true);
             Thread.currentThread().interrupt();
-            throw new ExternalProcessException("mpv IPC isteği kesildi.", exception);
+            throw new ExternalProcessException("The mpv IPC request was interrupted.", exception);
         } catch (ExecutionException exception) {
             Throwable cause = exception.getCause();
             if (cause instanceof ExternalProcessException externalProcessException) {
                 throw externalProcessException;
             }
-            throw new ExternalProcessException("mpv IPC isteği tamamlanamadı.", cause);
+            throw new ExternalProcessException("The mpv IPC request could not be completed.", cause);
         }
     }
 

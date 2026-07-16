@@ -1,7 +1,7 @@
 # PocketTune proje durumu
 
 - Son güncelleme: 16 Temmuz 2026
-- Sürüm: `0.7.0`
+- Sürüm: `0.7.1`
 - Minecraft: `1.21.4`
 - NeoForge: `21.4.157`
 - Java: `21`
@@ -14,6 +14,8 @@ Milestone 7 kod, otomatik test, production build ve açık kaynak depo hazırlı
 ## Tamamlanan kapsam
 
 - Modern ve responsive hoparlör GUI'si; geniş/kompakt yerleşim ve net sürükle-bırak önizlemesi
+- İngilizce oyun dili için GUI, config, overlay, tooltip, bildirim, hata ve debug metinlerinin tamamı İngilizce
+- Portable hoparlör zaman çizelgesi güncellenirken eldeki eşyanın tekrar tekrar aşağı-yukarı oynamasını engelleyen re-equip filtresi
 - Yüksek kaliteli YouTube kapak zinciri, playlist metadata'sı ve GUI içi tek seferlik bildirimler
 - Dışa/İçe Aktar arayüzü ve ilgili kodun kaldırılması
 - Normal sağ tıkta GUI, Shift + sağ tıkta sunucu-doğrulamalı portable pickup
@@ -30,20 +32,21 @@ Milestone 7 kod, otomatik test, production build ve açık kaynak depo hazırlı
 - Windows/macOS/Linux tek komut geliştirme kurulumu
 - Codex, Claude Code, Cursor, Windsurf ve Cline için ortak AI-first kurallar/dokümantasyon
 - Apache-2.0 lisansı, kalıcı `NOTICE` atfı, katkı/güvenlik/issue/PR belgeleri
+- Güncel İngilizce arayüz, portable overlay, elde taşınan hoparlör ve config ekranlarından oluşan GitHub galerisi
 
 ## Otomatik doğrulama
 
 - `clean test --rerun-tasks --no-daemon --no-configuration-cache`: başarılı
 - JUnit: 39 suite, 145 test, 0 failure, 0 error, 0 skipped
 - `clean build --rerun-tasks --no-daemon --no-configuration-cache`: başarılı
-- JAR metadata: `pockettune` / `0.7.0` / `Apache-2.0`
+- JAR metadata: `pockettune` / `0.7.1` / `Apache-2.0`
 - JAR içinde lisans, `NOTICE` ve NeoForge metadata'sı: doğrulandı
 - Test/example sınıfları production JAR içinde: yok
 - Build JAR ile `libs` kopyası byte-for-byte aynı
 
-- Production JAR: `libs/pockettune-0.7.0.jar`
-- Boyut: `414049` byte
-- SHA-256: `88F8CF5D29B217F47CA3514CBC532431DC0DAEFB4AA09C1E2538FBF6BF07C2E5`
+- Production JAR: `libs/pockettune-0.7.1.jar`
+- Boyut: `412930` byte
+- SHA-256: `82311342491FF900FD744B5C6A86CDA166CA25A4DC3D6BC31F0E18D01862B7D6`
 
 ## Oyun içi regresyon listesi
 
@@ -59,5 +62,6 @@ Milestone 7 kod, otomatik test, production build ve açık kaynak depo hazırlı
 10. Video/playlist ekleme sonucu yalnız GUI bildiriminde bir kez görünmeli; GUI yeniden açıldığında eski bildirim tekrarlanmamalı.
 11. Sunucu maximum range runtime config değişikliğinden sonra yüklü hoparlörün menzili yeni sınıra düşmeli.
 12. Dünya/chunk değişimi ve çıkış sonrasında eski mpv sesi veya yetim `pockettune-runtime` süreci kalmamalı.
+13. Portable hoparlörü elde en az 30 saniye tut; zaman çizelgesi güncellenirken eşya periyodik olarak aşağı-yukarı oynamamalı.
 
 Bir regresyon görülürse `docs/TROUBLESHOOTING.md` içindeki güvenli hata raporu adımlarını ve GitHub bug şablonunu kullan.

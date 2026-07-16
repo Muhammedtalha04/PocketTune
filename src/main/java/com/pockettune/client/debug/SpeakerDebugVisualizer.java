@@ -265,24 +265,24 @@ public final class SpeakerDebugVisualizer {
         int height = 83;
         graphics.fill(x, y, x + width, y + height, 0xD0101512);
         graphics.fill(x, y, x + 3, y + height, 0xFF72C900);
-        graphics.drawString(minecraft.font, "POCKETTUNE TEST MODU", x + 10, y + 8, 0xFF72C900, false);
+        graphics.drawString(minecraft.font, "POCKETTUNE TEST MODE", x + 10, y + 8, 0xFF72C900, false);
         graphics.drawString(minecraft.font,
-                "Hoparlör: " + snapshot.pos().getX() + ", " + snapshot.pos().getY() + ", " + snapshot.pos().getZ(),
+                "Speaker: " + snapshot.pos().getX() + ", " + snapshot.pos().getY() + ", " + snapshot.pos().getZ(),
                 x + 10, y + 21, 0xFFE8E8E8, false);
         graphics.drawString(minecraft.font,
-                "Mesafe: " + decimal(snapshot.distance()) + " / " + snapshot.settings().rangeBlocks() + " blok",
+                "Distance: " + decimal(snapshot.distance()) + " / " + snapshot.settings().rangeBlocks() + " blocks",
                 x + 10, y + 33, 0xFFE8E8E8, false);
         graphics.drawString(minecraft.font,
-                "Azalma: " + snapshot.settings().fadeType().displayName()
-                        + "  |  Mesafe sesi: %" + decimal(snapshot.distanceVolume()),
+                "Attenuation: " + snapshot.settings().fadeType().displayName()
+                        + "  |  Distance volume: " + decimal(snapshot.distanceVolume()) + "%",
                 x + 10, y + 45, 0xFFFFD45B, false);
         graphics.drawString(minecraft.font,
-                "Engel: " + snapshot.occlusion().blockedRays() + "/" + snapshot.occlusion().totalRays()
-                        + " ışın  |  Çarpan: %" + decimal(snapshot.occlusion().multiplier() * 100.0D),
+                "Occlusion: " + snapshot.occlusion().blockedRays() + "/" + snapshot.occlusion().totalRays()
+                        + " rays  |  Multiplier: " + decimal(snapshot.occlusion().multiplier() * 100.0D) + "%",
                 x + 10, y + 57, snapshot.occlusion().blockedRays() > 0 ? 0xFFFF6A5E : 0xFF68C987, false);
-        String state = !snapshot.playing() ? "Durdu" : snapshot.paused() ? "Duraklatıldı" : "Çalıyor";
+        String state = !snapshot.playing() ? "Stopped" : snapshot.paused() ? "Paused" : "Playing";
         graphics.drawString(minecraft.font,
-                "Sonuç: %" + decimal(snapshot.finalVolume()) + "  |  " + state,
+                "Result: " + decimal(snapshot.finalVolume()) + "%  |  " + state,
                 x + 10, y + 69, 0xFFE8E8E8, false);
     }
 

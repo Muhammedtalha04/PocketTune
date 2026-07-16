@@ -12,30 +12,30 @@ public final class PlaybackFailureMessages {
     }
 
     public static String forUrlInput(ExternalProcessException exception) {
-        return "Geçerli bir YouTube video veya playlist URL'si girin.";
+        return "Enter a valid YouTube video or playlist URL.";
     }
 
     public static String forPlaylistResolution(ExternalProcessException exception) {
         return switch (category(exception)) {
             case INVALID_INPUT -> forUrlInput(exception);
-            case TOOL_MISSING -> "Sunucuda yt-dlp bulunamadı. Sunucu yöneticisi araç kurulumunu kontrol etmeli.";
-            case NETWORK -> "YouTube'a bağlanılamadı. İnternet bağlantısını kontrol edip tekrar deneyin.";
-            case TIMEOUT -> "YouTube yanıt vermedi. Lütfen biraz sonra tekrar deneyin.";
-            case CAPACITY -> "Yerel ses işlem sınırına ulaşıldı. Bir hoparlörü durdurun veya istemci ayarındaki sınırı artırın.";
-            case MEDIA_UNAVAILABLE -> "Video veya playlist kullanılamıyor, gizli ya da erişim kısıtlı olabilir.";
-            case GENERAL -> "Şarkı veya playlist bilgileri alınamadı. Lütfen tekrar deneyin.";
+            case TOOL_MISSING -> "yt-dlp was not found on the server. Ask the server administrator to check the installation.";
+            case NETWORK -> "Could not connect to YouTube. Check the internet connection and try again.";
+            case TIMEOUT -> "YouTube did not respond in time. Please try again later.";
+            case CAPACITY -> "The local audio-process limit was reached. Stop a speaker or increase the client limit.";
+            case MEDIA_UNAVAILABLE -> "The video or playlist is unavailable, private or restricted.";
+            case GENERAL -> "Could not retrieve the track or playlist information. Please try again.";
         };
     }
 
     public static String forPlayback(ExternalProcessException exception) {
         return switch (category(exception)) {
             case INVALID_INPUT -> forUrlInput(exception);
-            case TOOL_MISSING -> "Oynatma araçları bulunamadı. yt-dlp ve mpv kurulumunu kontrol edin.";
-            case NETWORK -> "YouTube'a bağlanılamadı. İnternet bağlantısını kontrol edip tekrar deneyin.";
-            case TIMEOUT -> "Şarkı zamanında başlatılamadı. Lütfen tekrar deneyin.";
-            case CAPACITY -> "Aynı anda çalabilecek yerel ses sınırına ulaşıldı. Bir hoparlörü durdurun veya istemci ayarındaki sınırı artırın.";
-            case MEDIA_UNAVAILABLE -> "Bu şarkı kullanılamıyor, gizli ya da erişim kısıtlı olabilir.";
-            case GENERAL -> "Şarkı oynatılamadı. Lütfen tekrar deneyin.";
+            case TOOL_MISSING -> "Playback tools were not found. Check the yt-dlp and mpv installation.";
+            case NETWORK -> "Could not connect to YouTube. Check the internet connection and try again.";
+            case TIMEOUT -> "The track did not start in time. Please try again.";
+            case CAPACITY -> "The concurrent local-audio limit was reached. Stop a speaker or increase the client limit.";
+            case MEDIA_UNAVAILABLE -> "This track is unavailable, private or restricted.";
+            case GENERAL -> "The track could not be played. Please try again.";
         };
     }
 
@@ -56,7 +56,7 @@ public final class PlaybackFailureMessages {
             }
             current = next;
         }
-        return "PocketTune işlemi tamamlanamadı. Lütfen tekrar deneyin.";
+        return "The PocketTune operation could not be completed. Please try again.";
     }
 
     public static FailureCategory category(ExternalProcessException exception) {

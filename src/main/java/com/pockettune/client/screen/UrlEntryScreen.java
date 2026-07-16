@@ -28,7 +28,7 @@ public final class UrlEntryScreen extends Screen {
     private String error = "";
 
     public UrlEntryScreen(Screen parent, BlockPos speakerPos, UUID speakerInstanceId, boolean append) {
-        super(Component.literal(append ? "Playlist'e Ekle" : "URL Değiştir"));
+        super(Component.literal(append ? "Add to Playlist" : "Change URL"));
         this.parent = parent;
         this.speakerPos = speakerPos;
         this.speakerInstanceId = speakerInstanceId;
@@ -44,10 +44,10 @@ public final class UrlEntryScreen extends Screen {
                 Component.literal("YouTube video/playlist URL"));
         urlInput.setMaxLength(SetSpeakerUrlPayload.MAX_URL_LENGTH);
         addRenderableWidget(urlInput);
-        addRenderableWidget(Button.builder(Component.literal(append ? "Sıraya Ekle" : "Çal / Değiştir"), button -> submit())
+        addRenderableWidget(Button.builder(Component.literal(append ? "Add to Queue" : "Play / Replace"), button -> submit())
                 .bounds(left + 12, top + 66, (panelWidth - 30) / 2, 20)
                 .build());
-        addRenderableWidget(Button.builder(Component.literal("İptal"), button -> onClose())
+        addRenderableWidget(Button.builder(Component.literal("Cancel"), button -> onClose())
                 .bounds(left + 18 + (panelWidth - 30) / 2, top + 66, (panelWidth - 30) / 2, 20)
                 .build());
         setInitialFocus(urlInput);

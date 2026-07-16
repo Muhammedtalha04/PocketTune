@@ -155,10 +155,10 @@ public final class PortableMusicOverlay {
 
     private static StatusStyle statusStyle(PortableSpeakerPlaybackManager.OverlayPlaybackState state) {
         return switch (state) {
-            case PLAYING -> new StatusStyle("▶", "Çalıyor", GuiTheme.ACCENT, 0xB0263D16);
-            case PAUSED -> new StatusStyle("Ⅱ", "Duraklatıldı", 0xFFFFC857, 0xB0443515);
-            case BUFFERING -> new StatusStyle("…", "Hazırlanıyor", 0xFF75C9E8, 0xB0183540);
-            case ERROR -> new StatusStyle("!", "Oynatma hatası", 0xFFFF6A5E, 0xB0451C18);
+            case PLAYING -> new StatusStyle("▶", "Playing", GuiTheme.ACCENT, 0xB0263D16);
+            case PAUSED -> new StatusStyle("Ⅱ", "Paused", 0xFFFFC857, 0xB0443515);
+            case BUFFERING -> new StatusStyle("…", "Preparing", 0xFF75C9E8, 0xB0183540);
+            case ERROR -> new StatusStyle("!", "Playback error", 0xFFFF6A5E, 0xB0451C18);
         };
     }
 

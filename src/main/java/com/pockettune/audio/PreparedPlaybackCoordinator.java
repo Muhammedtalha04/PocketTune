@@ -35,7 +35,7 @@ final class PreparedPlaybackCoordinator {
         remainsPaused = operations.applyEffectivePause(playbackPaused);
         if (!remainsPaused && !operations.awaitPlaybackProgress()) {
             throw new ExternalProcessException(
-                    "mpv medya yüklendi ancak oynatma konumu ilerlemedi; otomatik yeniden denenecek."
+                    "mpv loaded the media but playback did not advance; an automatic retry will be attempted."
             );
         }
     }

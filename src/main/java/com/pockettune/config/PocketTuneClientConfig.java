@@ -137,9 +137,9 @@ public final class PocketTuneClientConfig {
     }
 
     public enum ThumbnailQuality {
-        MAXIMUM("Maksimum"),
-        HIGH("Yüksek"),
-        BALANCED("Dengeli");
+        MAXIMUM("Maximum"),
+        HIGH("High"),
+        BALANCED("Balanced");
 
         private final String displayName;
 

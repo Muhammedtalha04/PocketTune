@@ -1,0 +1,274 @@
+package com.pockettune.client.screen;
+
+import com.pockettune.client.gui.GuiTheme;
+import com.pockettune.client.gui.ThumbnailCache;
+import com.pockettune.client.debug.BlockInteractionDebugTracker;
+import com.pockettune.config.PocketTuneClientConfig;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.neoforged.neoforge.common.ModConfigSpec;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
+public final class PocketTuneConfigScreen extends Screen {
+    private static final int BUTTON_HEIGHT = 20;
+    private static final int ROW_GAP = 5;
+    private static final int MIN_ROW_GAP = 3;
+    private static final int GENERAL_BUTTON_COUNT = 12;
+
+    private final Screen parent;
+    private final List<Button> generalButtons = new ArrayList<>();
+    private final List<Button> testButtons = new ArrayList<>();
+    private final List<Button> blockDebugButtons = new ArrayList<>();
+    private Page page = Page.GENERAL;
+    private int settingsStartY = 68;
+    private int settingsColumns = 2;
+    private int settingsColumnGap = 8;
+    private int settingsRowStep = BUTTON_HEIGHT + ROW_GAP;
+
+    public PocketTuneConfigScreen(Screen parent) {
+        super(Component.literal("PocketTune Ayarları"));
+        this.parent = parent;
+    }
+
+    @Override
+    protected void init() {
+        generalButtons.clear();
+        testButtons.clear();
+        blockDebugButtons.clear();
+        int panelWidth = Math.max(1, Math.min(720, width - 24));
+        int panelX = (width - panelWidth) / 2;
+        configureSettingsGrid(panelWidth);
+        int tabGap = 6;
+        int tabWidth = (panelWidth - tabGap * 2) / 3;
+        addRenderableWidget(Button.builder(Component.literal("Genel ve Ses"), button -> selectPage(Page.GENERAL))
+                .bounds(panelX, 30, tabWidth, BUTTON_HEIGHT)
+                .build());
+        addRenderableWidget(Button.builder(Component.literal("Test Modu"), button -> selectPage(Page.TEST))
+                .bounds(panelX + tabWidth + tabGap, 30, tabWidth, BUTTON_HEIGHT)
+                .build());
+        addRenderableWidget(Button.builder(Component.literal("Blok Debug"), button -> selectPage(Page.BLOCK_DEBUG))
+                .bounds(panelX + (tabWidth + tabGap) * 2, 30,
+                        panelWidth - (tabWidth + tabGap) * 2, BUTTON_HEIGHT)
+                .build());
+
+        addGeneralButtons(panelX, panelWidth);
+        addTestButtons(panelX, panelWidth);
+        addBlockDebugButtons(panelX, panelWidth);
+        int saveButtonWidth = Math.min(180, Math.max(1, width - 24));
+        addRenderableWidget(Button.builder(Component.literal("Kaydet ve Geri Dön"), button -> onClose())
+                .bounds((width - saveButtonWidth) / 2, height - 28, saveButtonWidth, BUTTON_HEIGHT)
+                .build());
+        updateVisibility();
+    }
+
+    private void configureSettingsGrid(int panelWidth) {
+        settingsStartY = height < 210 ? 54 : 68;
+        int settingsBottom = Math.max(settingsStartY + BUTTON_HEIGHT, height - 36);
+        int availableHeight = Math.max(BUTTON_HEIGHT, settingsBottom - settingsStartY);
+        int maximumRows = Math.max(1,
+                (availableHeight + MIN_ROW_GAP) / (BUTTON_HEIGHT + MIN_ROW_GAP));
+        settingsColumns = Math.max(1,
+                (GENERAL_BUTTON_COUNT + maximumRows - 1) / maximumRows);
+        settingsColumnGap = Math.min(8,
+                Math.max(2, panelWidth / Math.max(12, settingsColumns * 12)));
+
+        int rows = (GENERAL_BUTTON_COUNT + settingsColumns - 1) / settingsColumns;
+        int spareHeight = Math.max(0, availableHeight - rows * BUTTON_HEIGHT);
+        int rowGap = rows <= 1 ? 0 : Math.min(ROW_GAP, spareHeight / (rows - 1));
+        settingsRowStep = BUTTON_HEIGHT + rowGap;
+    }
+
+    private void addGeneralButtons(int panelX, int panelWidth) {
+        addToggle(generalButtons, 0, panelX, panelWidth, "GUI Bildirimleri",
+                PocketTuneClientConfig.SHOW_GUI_NOTIFICATIONS);
+        addCycle(generalButtons, 1, panelX, panelWidth,
+                () -> "Bildirim Süresi: " + PocketTuneClientConfig.NOTIFICATION_DURATION_SECONDS.get() + " sn",
+                () -> cycle(PocketTuneClientConfig.NOTIFICATION_DURATION_SECONDS, 3, 5, 8, 12, 15));
+        addToggle(generalButtons, 2, panelX, panelWidth, "ESC Menüsünde Duraklat",
+                PocketTuneClientConfig.PAUSE_AUDIO_ON_PAUSE_SCREEN);
+        addCycle(generalButtons, 3, panelX, panelWidth,
+                () -> "Kapak Kalitesi: " + PocketTuneClientConfig.THUMBNAIL_QUALITY.get().displayName(),
+                () -> {
+                    PocketTuneClientConfig.THUMBNAIL_QUALITY.set(
+                            PocketTuneClientConfig.THUMBNAIL_QUALITY.get().next());
+                    ThumbnailCache.instance().clear();
+                });
+        addCycle(generalButtons, 4, panelX, panelWidth,
+                () -> "Kapak Önbelleği: " + PocketTuneClientConfig.THUMBNAIL_CACHE_ENTRIES.get(),
+                () -> {
+                    cycle(PocketTuneClientConfig.THUMBNAIL_CACHE_ENTRIES, 32, 64, 96, 128, 256);
+                    ThumbnailCache.instance().clear();
+                });
+        addCycle(generalButtons, 5, panelX, panelWidth,
+                () -> "Tam Ses Mesafesi: " + format(PocketTuneClientConfig.FULL_VOLUME_DISTANCE.get()) + " blok",
+                () -> cycle(PocketTuneClientConfig.FULL_VOLUME_DISTANCE, 2, 4, 6, 8, 12, 16));
+        addCycle(generalButtons, 6, panelX, panelWidth,
+                () -> "Duvar Azaltma: %" + PocketTuneClientConfig.OCCLUSION_MAX_REDUCTION_PERCENT.get(),
+                () -> cycle(PocketTuneClientConfig.OCCLUSION_MAX_REDUCTION_PERCENT, 25, 50, 65, 75, 90, 100));
+        addCycle(generalButtons, 7, panelX, panelWidth,
+                () -> "Engel Tepki Hızı: %" + PocketTuneClientConfig.OCCLUSION_SMOOTHING_PERCENT.get(),
+                () -> cycle(PocketTuneClientConfig.OCCLUSION_SMOOTHING_PERCENT, 10, 20, 35, 50, 75, 100));
+        addCycle(generalButtons, 8, panelX, panelWidth,
+                () -> "Menzil Dışı Bekleme: " + PocketTuneClientConfig.OUT_OF_RANGE_GRACE_SECONDS.get() + " sn",
+                () -> cycle(PocketTuneClientConfig.OUT_OF_RANGE_GRACE_SECONDS, 0, 5, 10, 15, 20, 30));
+        addCycle(generalButtons, 9, panelX, panelWidth,
+                () -> "Azami Eşzamanlı Ses: "
+                        + PocketTuneClientConfig.MAX_CONCURRENT_MPV_CONTROLLERS.get(),
+                () -> cycle(PocketTuneClientConfig.MAX_CONCURRENT_MPV_CONTROLLERS,
+                        1, 2, 4, 6, 8, 12, 16, 24, 32));
+        addToggle(generalButtons, 10, panelX, panelWidth, "Müzik Overlay'i",
+                PocketTuneClientConfig.SHOW_PORTABLE_HUD);
+        addToggle(generalButtons, 11, panelX, panelWidth, "F1'de Overlay'i Göster",
+                PocketTuneClientConfig.SHOW_PORTABLE_OVERLAY_WHEN_HUD_HIDDEN);
+    }
+
+    private void addTestButtons(int panelX, int panelWidth) {
+        addToggle(testButtons, 0, panelX, panelWidth, "Test Modu", PocketTuneClientConfig.TEST_MODE_ENABLED);
+        addToggle(testButtons, 1, panelX, panelWidth, "Menzil Sınırı", PocketTuneClientConfig.VISUALIZE_RANGE);
+        addToggle(testButtons, 2, panelX, panelWidth, "Azalma Bölgeleri",
+                PocketTuneClientConfig.VISUALIZE_ATTENUATION);
+        addToggle(testButtons, 3, panelX, panelWidth, "Engel Işınları",
+                PocketTuneClientConfig.VISUALIZE_OCCLUSION);
+        addToggle(testButtons, 4, panelX, panelWidth, "Ölçüm Paneli", PocketTuneClientConfig.SHOW_TEST_HUD);
+        addCycle(testButtons, 5, panelX, panelWidth,
+                () -> "Yenileme: " + PocketTuneClientConfig.VISUALIZATION_INTERVAL_TICKS.get() + " tick",
+                () -> cycle(PocketTuneClientConfig.VISUALIZATION_INTERVAL_TICKS, 2, 5, 10, 20, 40));
+        addCycle(testButtons, 6, panelX, panelWidth,
+                () -> "Halka Kalitesi: " + PocketTuneClientConfig.VISUALIZATION_SEGMENTS.get(),
+                () -> cycle(PocketTuneClientConfig.VISUALIZATION_SEGMENTS, 16, 24, 32, 48, 64));
+        addCycle(testButtons, 7, panelX, panelWidth,
+                () -> "Azami Mesafe: " + PocketTuneClientConfig.MAX_VISUALIZATION_DISTANCE.get() + " blok",
+                () -> cycle(PocketTuneClientConfig.MAX_VISUALIZATION_DISTANCE, 64, 96, 128, 160, 192, 256));
+        addCycle(testButtons, 8, panelX, panelWidth,
+                () -> "Azami Hoparlör: " + PocketTuneClientConfig.MAX_VISUALIZED_SPEAKERS.get(),
+                () -> cycle(PocketTuneClientConfig.MAX_VISUALIZED_SPEAKERS, 1, 2, 4, 8, 16));
+    }
+
+    private void addBlockDebugButtons(int panelX, int panelWidth) {
+        addToggle(blockDebugButtons, 0, panelX, panelWidth, "Blok Etkileşim Debug",
+                PocketTuneClientConfig.BLOCK_INTERACTION_DEBUG_ENABLED);
+        addToggle(blockDebugButtons, 1, panelX, panelWidth, "Ekran Debug Paneli",
+                PocketTuneClientConfig.SHOW_BLOCK_INTERACTION_HUD);
+        addToggle(blockDebugButtons, 2, panelX, panelWidth, "Log Dosyasına Yaz",
+                PocketTuneClientConfig.LOG_BLOCK_INTERACTION_EVENTS);
+        addCycle(blockDebugButtons, 3, panelX, panelWidth,
+                () -> "Geçmiş Boyutu: " + PocketTuneClientConfig.BLOCK_INTERACTION_HISTORY_SIZE.get(),
+                () -> cycle(PocketTuneClientConfig.BLOCK_INTERACTION_HISTORY_SIZE, 6, 8, 12, 16, 20, 24));
+        addCycle(blockDebugButtons, 4, panelX, panelWidth,
+                () -> "Debug Geçmişini Temizle",
+                BlockInteractionDebugTracker::clear);
+    }
+
+    private void addToggle(
+            List<Button> pageButtons,
+            int index,
+            int panelX,
+            int panelWidth,
+            String label,
+            ModConfigSpec.BooleanValue value
+    ) {
+        addCycle(pageButtons, index, panelX, panelWidth,
+                () -> label + ": " + (value.get() ? "Açık" : "Kapalı"),
+                () -> value.set(!value.get()));
+    }
+
+    private void addCycle(
+            List<Button> pageButtons,
+            int index,
+            int panelX,
+            int panelWidth,
+            Supplier<String> message,
+            Runnable action
+    ) {
+        int totalGapWidth = settingsColumnGap * Math.max(0, settingsColumns - 1);
+        int buttonWidth = Math.max(1, (panelWidth - totalGapWidth) / settingsColumns);
+        int column = index % settingsColumns;
+        int row = index / settingsColumns;
+        int x = panelX + column * (buttonWidth + settingsColumnGap);
+        int resolvedWidth = column == settingsColumns - 1
+                ? Math.max(1, panelX + panelWidth - x)
+                : buttonWidth;
+        int y = settingsStartY + row * settingsRowStep;
+        Button button = Button.builder(Component.literal(message.get()), pressed -> {
+                    action.run();
+                    pressed.setMessage(Component.literal(message.get()));
+                })
+                .bounds(x, y, resolvedWidth, BUTTON_HEIGHT)
+                .build();
+        pageButtons.add(addRenderableWidget(button));
+    }
+
+    private void selectPage(Page selected) {
+        page = selected;
+        updateVisibility();
+    }
+
+    private void updateVisibility() {
+        generalButtons.forEach(button -> button.visible = page == Page.GENERAL);
+        testButtons.forEach(button -> button.visible = page == Page.TEST);
+        blockDebugButtons.forEach(button -> button.visible = page == Page.BLOCK_DEBUG);
+    }
+
+    @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        graphics.fill(0, 0, width, height, GuiTheme.BACKGROUND);
+        int panelWidth = Math.max(1, Math.min(744, width - 12));
+        int panelX = (width - panelWidth) / 2;
+        GuiTheme.panel(graphics, new GuiTheme.Bounds(panelX, 8, panelWidth, Math.max(1, height - 44)));
+        graphics.drawCenteredString(font, title, width / 2, 14, GuiTheme.ACCENT);
+        String description = switch (page) {
+            case GENERAL -> "Arayüz, kapak belleği ve yerel uzamsal ses davranışı";
+            case TEST -> "Geliştirme görselleri yalnızca Test Modu açıkken çalışır";
+            case BLOCK_DEBUG -> "Event, paket, callback, BlockEntity ve sunucu/istemci state izleme";
+        };
+        if (height >= 210) {
+            graphics.drawCenteredString(font, description, width / 2, 56, GuiTheme.MUTED);
+        }
+        super.render(graphics, mouseX, mouseY, partialTick);
+    }
+
+    @Override
+    public void onClose() {
+        PocketTuneClientConfig.SPEC.save();
+        if (minecraft != null) {
+            minecraft.setScreen(parent);
+        }
+    }
+
+    private static void cycle(ModConfigSpec.IntValue value, int... choices) {
+        int current = value.get();
+        for (int index = 0; index < choices.length; index++) {
+            if (choices[index] == current) {
+                value.set(choices[(index + 1) % choices.length]);
+                return;
+            }
+        }
+        value.set(choices[0]);
+    }
+
+    private static void cycle(ModConfigSpec.DoubleValue value, int... choices) {
+        double current = value.get();
+        for (int index = 0; index < choices.length; index++) {
+            if (Math.abs(choices[index] - current) < 0.001D) {
+                value.set((double) choices[(index + 1) % choices.length]);
+                return;
+            }
+        }
+        value.set((double) choices[0]);
+    }
+
+    private static String format(double value) {
+        return value == Math.rint(value) ? Integer.toString((int) value) : Double.toString(value);
+    }
+
+    private enum Page {
+        GENERAL,
+        TEST,
+        BLOCK_DEBUG
+    }
+}

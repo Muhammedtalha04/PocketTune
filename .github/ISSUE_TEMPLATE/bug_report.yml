@@ -1,0 +1,50 @@
+name: Bug report
+description: Report a reproducible PocketTune problem
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Please remove signed URLs, tokens, private server addresses and personal filesystem paths.
+  - type: input
+    id: version
+    attributes:
+      label: PocketTune version
+      placeholder: 0.7.0
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: Minecraft 1.21.4, NeoForge 21.4.x, Windows/Linux/macOS, single-player/dedicated server
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: Use the smallest reliable sequence.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and safe logs
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues.
+          required: true
+        - label: I removed secrets, signed media URLs and personal paths.
+          required: true

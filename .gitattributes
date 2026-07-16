@@ -1,0 +1,22 @@
+# Keep repository text deterministic across Windows and Linux builds.
+* text=auto
+.gitattributes text eol=lf
+.gitignore text eol=lf
+LICENSE text eol=lf
+TEMPLATE_LICENSE.txt text eol=lf
+*.java text eol=lf
+*.gradle text eol=lf
+*.properties text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.sh text eol=lf
+*.ps1 text eol=crlf
+gradlew text eol=lf
+*.bat text eol=crlf
+
+# Generated data always uses LF.
+src/generated/**/.cache/* text eol=lf
+src/generated/**/*.json text eol=lf

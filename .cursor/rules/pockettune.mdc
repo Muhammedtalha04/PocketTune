@@ -1,0 +1,6 @@
+---
+description: PocketTune repository-wide engineering rules
+alwaysApply: true
+---
+
+Read and follow `AGENTS.md`. Use `ARCHITECTURE.md` to locate ownership and `DEVELOPMENT.md` for commands. Do not start Minecraft or real media smoke tests unless the user explicitly requests them.

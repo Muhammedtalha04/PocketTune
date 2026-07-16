@@ -57,7 +57,7 @@ public final class ClientSpeakerInteractionEvents {
                     event.getPos(),
                     BlockInteractionTracePayload.Stage.CLIENT_RIGHT_CLICK,
                     true,
-                    "RightClickBlock iptal edildi; vanilla item kullanımı engellendi"
+                    "RightClickBlock cancelled; vanilla item use was blocked"
             );
             PacketDistributor.sendToServer(new PickupPortableSpeakerPayload(
                     event.getPos(),
@@ -91,7 +91,7 @@ public final class ClientSpeakerInteractionEvents {
             if (!status.ready() && minecraft.player != null) {
                 minecraft.player.displayClientMessage(
                         net.minecraft.network.chat.Component.literal(
-                                "[PocketTune] İstemci ses araçları hazır değil: " + status.missingToolsMessage()),
+                                "[PocketTune] Client audio tools are not ready: " + status.missingToolsMessage()),
                         false
                 );
             }

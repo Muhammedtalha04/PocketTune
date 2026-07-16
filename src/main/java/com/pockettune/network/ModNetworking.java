@@ -130,7 +130,7 @@ public final class ModNetworking {
         SpeakerBlockEntity speaker = findEditableSpeaker(player, payload.pos(), payload.speakerInstanceId());
         if (speaker == null) {
             sendOperationFeedback(player, payload.pos(), SpeakerOperationFeedbackPayload.State.ERROR,
-                    "Hoparlör artık erişilebilir değil.");
+                    "The speaker is no longer accessible.");
             return;
         }
 
@@ -138,7 +138,7 @@ public final class ModNetworking {
         if (url.isEmpty()) {
             speaker.stopFromServer();
             sendOperationFeedback(player, payload.pos(), SpeakerOperationFeedbackPayload.State.SUCCESS,
-                    "Hoparlör durduruldu.");
+                    "The speaker was stopped.");
             return;
         }
 
@@ -151,7 +151,7 @@ public final class ModNetworking {
         }
 
         sendOperationFeedback(player, payload.pos(), SpeakerOperationFeedbackPayload.State.PENDING,
-                "Şarkı veya playlist bilgileri alınıyor…");
+                "Retrieving track or playlist information…");
         PlaylistResolutionService.resolveAndApply(player, speaker, url);
     }
 
@@ -162,7 +162,7 @@ public final class ModNetworking {
         SpeakerBlockEntity speaker = findEditableSpeaker(player, payload.pos(), payload.speakerInstanceId());
         if (speaker == null || !speaker.changeTrackFromServer(payload.direction())) {
             sendOperationFeedback(player, payload.pos(), SpeakerOperationFeedbackPayload.State.ERROR,
-                    "Parça değiştirilemedi.");
+                    "The track could not be changed.");
         }
     }
 
@@ -173,7 +173,7 @@ public final class ModNetworking {
         SpeakerBlockEntity speaker = findEditableSpeaker(player, payload.pos(), payload.speakerInstanceId());
         if (speaker == null) {
             sendOperationFeedback(player, payload.pos(), SpeakerOperationFeedbackPayload.State.ERROR,
-                    "Hoparlör artık erişilebilir değil.");
+                    "The speaker is no longer accessible.");
             return;
         }
         String url;
@@ -185,7 +185,7 @@ public final class ModNetworking {
             return;
         }
         sendOperationFeedback(player, payload.pos(), SpeakerOperationFeedbackPayload.State.PENDING,
-                "Yeni parçalar sıraya ekleniyor…");
+                "Adding new tracks to the queue…");
         PlaylistResolutionService.resolveAndAppend(player, speaker, url);
     }
 
@@ -206,7 +206,7 @@ public final class ModNetworking {
         SpeakerBlockEntity speaker = findEditableSpeaker(player, payload.pos(), payload.speakerInstanceId());
         if (speaker != null && !speaker.applyQueueAction(payload.action(), payload.fromIndex(), payload.toIndex())) {
             sendOperationFeedback(player, payload.pos(), SpeakerOperationFeedbackPayload.State.ERROR,
-                    "Playlist işlemi uygulanamadı.");
+                    "The playlist operation could not be applied.");
         }
     }
 
@@ -246,10 +246,10 @@ public final class ModNetworking {
         );
         if (decision == SpeakerBlockEntity.TrackResultDecision.SKIPPED_UNAVAILABLE) {
             sendOperationFeedback(player, payload.pos(), SpeakerOperationFeedbackPayload.State.ERROR,
-                    "Kullanılamayan parça atlandı; sıradaki parça açılıyor.");
+                    "The unavailable track was skipped; opening the next track.");
         } else if (decision == SpeakerBlockEntity.TrackResultDecision.STOPPED_ALL_UNAVAILABLE) {
             sendOperationFeedback(player, payload.pos(), SpeakerOperationFeedbackPayload.State.ERROR,
-                    "Sıradaki hiçbir parça oynatılamadığı için hoparlör durduruldu.");
+                    "The speaker stopped because no remaining track could be played.");
         }
     }
 
@@ -272,8 +272,8 @@ public final class ModNetworking {
                 BlockInteractionTracePayload.Stage.SERVER_PACKET_RECEIVED,
                 requestedSpeaker != null,
                 requestedSpeaker == null
-                        ? "İstek loaded-chunk, örnek kimliği veya vanilla etkileşim denetiminde reddedildi"
-                        : "İstek doğrulandı; takip eden vanilla RightClickBlock paketi bekleniyor"
+                        ? "Request rejected by loaded-chunk, instance identity or vanilla interaction validation"
+                        : "Request validated; waiting for the following vanilla RightClickBlock packet"
         );
         if (requestedSpeaker == null) {
             sendPickupResult(
@@ -282,7 +282,7 @@ public final class ModNetworking {
                     PortableSpeakerState.UNASSIGNED_ID,
                     false,
                     false,
-                    "Hoparlör yüklü değil, değiştirilmiş veya vanilla etkileşim denetimi işlemi reddetti."
+                    "The speaker is not loaded, was replaced or failed vanilla interaction validation."
             );
             return;
         }
@@ -300,7 +300,7 @@ public final class ModNetworking {
                     PortableSpeakerState.UNASSIGNED_ID,
                     false,
                     isAuthorizedLoadedSpeakerPresent(player, previous.payload()),
-                    "Yeni pickup isteği önceki bekleyen işlemin yerini aldı."
+                    "A new pickup request replaced the previous pending operation."
             );
         }
     }
@@ -327,7 +327,7 @@ public final class ModNetworking {
                     PortableSpeakerState.UNASSIGNED_ID,
                     false,
                     false,
-                    "Bekleyen hoparlör artık yüklü, erişilebilir veya aynı blok örneği değil."
+                    "The pending speaker is no longer loaded, accessible or the same block instance."
             );
             return true;
         }
@@ -337,7 +337,7 @@ public final class ModNetworking {
                     pending.payload(),
                     BlockInteractionTracePayload.Stage.SERVER_RIGHT_CLICK_EVENT,
                     false,
-                    "RightClickBlock eventi başka bir handler tarafından daha önce iptal edildi"
+                    "The RightClickBlock event was already cancelled by another handler"
             );
             sendPickupResult(
                     player,
@@ -345,7 +345,7 @@ public final class ModNetworking {
                     PortableSpeakerState.UNASSIGNED_ID,
                     false,
                     true,
-                    "RightClickBlock eventi başka bir mod veya event handler tarafından iptal edildi."
+                    "The RightClickBlock event was cancelled by another mod or event handler."
             );
             return true;
         }
@@ -354,7 +354,7 @@ public final class ModNetworking {
                 pending.payload(),
                 BlockInteractionTracePayload.Stage.SERVER_RIGHT_CLICK_EVENT,
                 true,
-                "Trailing ServerboundUseItemOnPacket iptal edildi; item yeniden yerleştirilemez"
+                "Trailing ServerboundUseItemOnPacket cancelled; the item cannot be placed back"
         );
         executePortableSpeakerPickup(player, pending.payload());
         return true;
@@ -371,7 +371,7 @@ public final class ModNetworking {
                 pending.payload(),
                 BlockInteractionTracePayload.Stage.SERVER_RIGHT_CLICK_EVENT,
                 false,
-                "Vanilla RightClickBlock paketi zaman aşımına uğradı"
+                "The vanilla RightClickBlock packet timed out"
         );
         sendPickupResult(
                 player,
@@ -379,7 +379,7 @@ public final class ModNetworking {
                 PortableSpeakerState.UNASSIGNED_ID,
                 false,
                 isAuthorizedLoadedSpeakerPresent(player, pending.payload()),
-                "Vanilla RightClickBlock eventi zamanında alınamadı."
+                "The vanilla RightClickBlock event was not received in time."
         );
     }
 
@@ -402,7 +402,7 @@ public final class ModNetworking {
                     payload,
                     BlockInteractionTracePayload.Stage.SERVER_BLOCK_ENTITY_FOUND,
                     false,
-                    "Yüklü/erişilebilir SpeakerBlockEntity bulunamadı"
+                    "No loaded and accessible SpeakerBlockEntity was found"
             );
             sendPickupResult(
                     player,
@@ -410,7 +410,7 @@ public final class ModNetworking {
                     PortableSpeakerState.UNASSIGNED_ID,
                     false,
                     false,
-                    "SpeakerBlockEntity yüklü değil, örnek kimliği değişti veya vanilla erişim reddedildi."
+                    "The SpeakerBlockEntity is not loaded, its instance changed or vanilla access was denied."
             );
             return;
         }
@@ -426,7 +426,7 @@ public final class ModNetworking {
                 payload,
                 BlockInteractionTracePayload.Stage.SERVER_INTERACTION_VALIDATED,
                 true,
-                "Erişim, dünya sınırı ve oyun modu kontrolleri geçti"
+                "Reach, world-border and game-mode checks passed"
         );
 
         PortableSpeakerState portableState = speaker.createPortableState(level.getGameTime());
@@ -443,7 +443,7 @@ public final class ModNetworking {
                 payload,
                 BlockInteractionTracePayload.Stage.SERVER_PREPARE_SENT,
                 true,
-                "Controller transfer kilidi hazırlanıyor"
+                "Preparing the controller-transfer gate"
         );
         ItemStack portableSpeaker = new ItemStack(ModItems.SPEAKER.get());
         portableSpeaker.set(ModDataComponents.PORTABLE_SPEAKER_STATE.get(), portableState);
@@ -479,8 +479,8 @@ public final class ModNetworking {
                     false,
                     serverSpeakerPresent,
                     !removed
-                            ? "ServerLevel.destroyBlock callback'i false döndürdü."
-                            : "Kaldırma callback'inden sonra sunucuda hoparlör hâlâ mevcut."
+                            ? "ServerLevel.destroyBlock returned false."
+                            : "The speaker still exists on the server after the removal callback."
             );
             return;
         }
@@ -492,7 +492,7 @@ public final class ModNetworking {
                     payload,
                     BlockInteractionTracePayload.Stage.SERVER_ITEM_DROPPED,
                     true,
-                    "Envanter dolu; durumlu item dünyaya bırakıldı"
+                    "Inventory full; the stateful item was dropped into the world"
             );
         } else {
             tracePickup(
@@ -500,7 +500,7 @@ public final class ModNetworking {
                     payload,
                     BlockInteractionTracePayload.Stage.SERVER_ITEM_GRANTED,
                     true,
-                    "Durumlu item oyuncu envanterine eklendi"
+                    "The stateful item was added to the player's inventory"
             );
         }
         sendPickupResult(
@@ -509,7 +509,7 @@ public final class ModNetworking {
                 portableState.speakerId(),
                 true,
                 false,
-                addedToInventory ? "Hoparlör envantere aktarıldı." : "Envanter dolu; hoparlör dünyaya bırakıldı."
+                addedToInventory ? "The speaker was moved to the inventory." : "Inventory full; the speaker was dropped into the world."
         );
     }
 
@@ -555,7 +555,7 @@ public final class ModNetworking {
                     payload.pos(),
                     BlockInteractionTracePayload.Stage.CLIENT_PREPARE_RECEIVED,
                     false,
-                    "Prepare geldiğinde istemci BlockEntity bulunamadı"
+                    "The client BlockEntity was missing when the prepare packet arrived"
             );
         }
     }
@@ -658,7 +658,7 @@ public final class ModNetworking {
             SpeakerOperationFeedbackPayload.State state,
             String message
     ) {
-        String safeMessage = message == null || message.isBlank() ? "İşlem tamamlanamadı." : message.strip();
+        String safeMessage = message == null || message.isBlank() ? "The operation could not be completed." : message.strip();
         if (safeMessage.length() > SpeakerOperationFeedbackPayload.MAX_MESSAGE_LENGTH) {
             safeMessage = safeMessage.substring(0, SpeakerOperationFeedbackPayload.MAX_MESSAGE_LENGTH);
         }

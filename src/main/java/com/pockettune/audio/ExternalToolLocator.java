@@ -122,7 +122,7 @@ public final class ExternalToolLocator {
                     .toAbsolutePath()
                     .normalize();
         } catch (InvalidPathException exception) {
-            throw invalidOverride(tool, override, "işletim sistemi için geçerli bir dosya yolu değil", exception);
+            throw invalidOverride(tool, override, "not a valid filesystem path for this operating system", exception);
         }
 
         PathValidation validation = validator.validate(configuredPath, windows);
@@ -138,18 +138,18 @@ public final class ExternalToolLocator {
 
     private static PathValidation validateExecutablePath(Path path, boolean windows) {
         if (!Files.isRegularFile(path)) {
-            return PathValidation.invalid("dosya bulunamadı veya normal bir dosya değil");
+            return PathValidation.invalid("the file does not exist or is not a regular file");
         }
         if (windows) {
             String fileName = path.getFileName().toString().toLowerCase(Locale.ROOT);
             if (!fileName.endsWith(".exe") && !fileName.endsWith(".com")) {
                 return PathValidation.invalid(
-                        "Windows'ta shell kullanmadan çalıştırılabilen bir .exe veya .com dosyası değil"
+                        "not an executable .exe or .com file that can run without a shell on Windows"
                 );
             }
         }
         if (!windows && !Files.isExecutable(path)) {
-            return PathValidation.invalid("dosyanın çalıştırma izni yok");
+            return PathValidation.invalid("the file is not executable");
         }
         return PathValidation.valid();
     }
@@ -160,9 +160,9 @@ public final class ExternalToolLocator {
             String reason,
             Throwable cause
     ) {
-        String message = "pockettune-common.toml içindeki '" + tool.configKey()
-                + "' geçersiz: '" + configuredValue + "' (" + reason
-                + "). Değeri düzeltin veya otomatik arama için boş bırakın.";
+        String message = "The '" + tool.configKey() + "' value in pockettune-common.toml is invalid: '"
+                + configuredValue + "' (" + reason
+                + "). Correct it or leave it empty for automatic discovery.";
         return cause == null
                 ? new ExternalProcessException(message, ExternalProcessException.FailureKind.TOOL_MISSING)
                 : new ExternalProcessException(

@@ -249,7 +249,7 @@ public final class MpvController implements AutoCloseable {
         try {
             Files.createDirectories(runtimeDirectory);
         } catch (IOException exception) {
-            throw new ExternalProcessException("PocketTune çalışma klasörü oluşturulamadı.", exception);
+            throw new ExternalProcessException("The PocketTune working directory could not be created.", exception);
         }
 
         MpvProcessRegistry.ensureStartupAllowed(expectedSessionEpoch);
@@ -293,14 +293,14 @@ public final class MpvController implements AutoCloseable {
                 ));
         if (controller == null) {
             throw new ExternalProcessException(
-                    "mpv başlangıcı sahip oynatma isteği iptal edildiği için başlatılmadı."
+                    "mpv startup was skipped because its owning playback request was cancelled."
             );
         }
         if (startupLease != null && startupLease.isCancelled()) {
             // Ownership deliberately remains with the lease. Its cancellation cleanup can detach
             // and terminate this exact controller without letting a stale startup publish it.
             throw new ExternalProcessException(
-                    "mpv başlangıç isteği process oluşturulduktan sonra iptal edildi."
+                    "The mpv startup request was cancelled after the process was created."
             );
         }
         return StartupResourceGuard.prepare(controller, preparedController -> {
@@ -348,8 +348,8 @@ public final class MpvController implements AutoCloseable {
                         .start();
             } catch (IOException exception) {
                 throw new ExternalProcessException(
-                        "mpv başlatılamadı: '" + executable
-                                + "'. pockettune-common.toml yol ayarını veya sistem PATH değerini kontrol edin.",
+                        "mpv could not be started: '" + executable
+                                + "'. Check the path setting in pockettune-common.toml or the system PATH.",
                         exception
                 );
             }
@@ -468,7 +468,7 @@ public final class MpvController implements AutoCloseable {
                 return new YtDlpResolver.ToolVersion(true, result.stdout().lines().findFirst().orElse("unknown"));
             }
             String details = result.stderr().isBlank()
-                    ? "mpv sürüm denetimi başarısız oldu (çıkış kodu " + result.exitCode() + ")."
+                    ? "The mpv version check failed (exit code " + result.exitCode() + ")."
                     : summarizeProbeError(result.stderr());
             return new YtDlpResolver.ToolVersion(false, "", details);
         } catch (ExternalProcessException exception) {
@@ -556,10 +556,10 @@ public final class MpvController implements AutoCloseable {
     public void ensurePlaybackProgressAfterResume(double targetSeconds, boolean playbackPaused)
             throws ExternalProcessException {
         if (!preparedLaunch) {
-            throw new ExternalProcessException("Oynatma ilerleme doğrulaması yalnızca hazırlanmış mpv için kullanılabilir.");
+            throw new ExternalProcessException("Playback-progress verification is available only for prepared mpv sessions.");
         }
         if (!isAlive()) {
-            throw new ExternalProcessException("mpv oynatma ilerlemesi doğrulanmadan kapandı.");
+            throw new ExternalProcessException("mpv exited before playback progress was verified.");
         }
         double target = Double.isFinite(targetSeconds) ? Math.max(0.0D, targetSeconds) : 0.0D;
         setVolume(0.0D);
@@ -580,7 +580,7 @@ public final class MpvController implements AutoCloseable {
         ExternalProcessException lastError = null;
         while (System.nanoTime() < deadline) {
             if (!isAlive()) {
-                throw new ExternalProcessException("mpv seek beklenirken kapandı.");
+                throw new ExternalProcessException("mpv exited while waiting for seek readiness.");
             }
             try {
                 JsonElement seekable = getProperty("seekable");
@@ -596,10 +596,10 @@ public final class MpvController implements AutoCloseable {
                 Thread.sleep(100L);
             } catch (InterruptedException exception) {
                 Thread.currentThread().interrupt();
-                throw new ExternalProcessException("mpv seek hazırlığı kesildi.", exception);
+                throw new ExternalProcessException("mpv seek preparation was interrupted.", exception);
             }
         }
-        throw new ExternalProcessException("Bu medya akışı seek desteklemiyor veya henüz hazır değil.", lastError);
+        throw new ExternalProcessException("This media stream does not support seeking or is not ready yet.", lastError);
     }
 
     private void awaitSeekCompletion(double target) throws ExternalProcessException {
@@ -608,7 +608,7 @@ public final class MpvController implements AutoCloseable {
         Double lastObservedPosition = null;
         while (System.nanoTime() < deadline) {
             if (!isAlive()) {
-                throw new ExternalProcessException("mpv seek tamamlanmadan kapandı.");
+                throw new ExternalProcessException("mpv exited before the seek completed.");
             }
             try {
                 JsonElement seeking = getProperty("seeking");
@@ -626,7 +626,7 @@ public final class MpvController implements AutoCloseable {
             } catch (ExternalProcessException exception) {
                 lastError = exception;
             }
-            sleepForPolling("mpv seek tamamlanması beklenirken işlem kesildi.", 50L);
+            sleepForPolling("The operation was interrupted while waiting for mpv seek completion.", 50L);
         }
         String observed = lastObservedPosition == null
                 ? "bilinmiyor"
@@ -634,7 +634,7 @@ public final class MpvController implements AutoCloseable {
         throw new ExternalProcessException(
                 String.format(
                         Locale.ROOT,
-                        "mpv seek hedefi doğrulanamadı (hedef=%.3f, görülen=%s).",
+                        "The mpv seek target could not be verified (target=%.3f, observed=%s).",
                         target,
                         observed
                 ),
@@ -694,7 +694,7 @@ public final class MpvController implements AutoCloseable {
         ExternalProcessException lastError = null;
         while (System.nanoTime() < deadline) {
             if (!isAlive()) {
-                throw new ExternalProcessException("mpv oynatma doğrulaması sırasında kapandı.");
+                throw new ExternalProcessException("mpv exited during playback verification.");
             }
             if (MpvProcessRegistry.isPauseRequested()) {
                 return true;
@@ -718,7 +718,7 @@ public final class MpvController implements AutoCloseable {
             } catch (ExternalProcessException exception) {
                 lastError = exception;
             }
-            sleepForPolling("mpv oynatma ilerlemesi beklenirken işlem kesildi.", 100L);
+            sleepForPolling("The operation was interrupted while waiting for mpv playback progress.", 100L);
         }
         if (lastError != null && !isAlive()) {
             throw lastError;
@@ -756,7 +756,7 @@ public final class MpvController implements AutoCloseable {
         while (System.nanoTime() < deadline) {
             if (!process.isAlive()) {
                 close();
-                throw new ExternalProcessException("mpv oynatma başlamadan kapandı. Log: " + logPath);
+                throw new ExternalProcessException("mpv exited before playback started. Log: " + logPath);
             }
             try {
                 getProperty("idle-active");
@@ -770,11 +770,11 @@ public final class MpvController implements AutoCloseable {
             } catch (InterruptedException exception) {
                 Thread.currentThread().interrupt();
                 close();
-                throw new ExternalProcessException("mpv IPC bağlantısı beklenirken işlem kesildi.", exception);
+                throw new ExternalProcessException("The operation was interrupted while waiting for the mpv IPC connection.", exception);
             }
         }
         close();
-        throw new ExternalProcessException("mpv IPC bağlantısı zaman aşımına uğradı.", lastError);
+        throw new ExternalProcessException("The mpv IPC connection timed out.", lastError);
     }
 
     private void awaitMediaReady() throws ExternalProcessException {
@@ -782,7 +782,7 @@ public final class MpvController implements AutoCloseable {
         ExternalProcessException lastError = null;
         while (System.nanoTime() < deadline) {
             if (!process.isAlive()) {
-                throw new ExternalProcessException("mpv medya yüklenirken kapandı. Log: " + logPath);
+                throw new ExternalProcessException("mpv exited while loading media. Log: " + logPath);
             }
             try {
                 JsonElement idle = getProperty("idle-active");
@@ -796,10 +796,10 @@ public final class MpvController implements AutoCloseable {
                 Thread.sleep(100L);
             } catch (InterruptedException exception) {
                 Thread.currentThread().interrupt();
-                throw new ExternalProcessException("mpv medya yükleme beklemesi kesildi.", exception);
+                throw new ExternalProcessException("The media-load wait was interrupted.", exception);
             }
         }
-        throw new ExternalProcessException("mpv medya yükleme zaman aşımına uğradı. Log: " + logPath, lastError);
+        throw new ExternalProcessException("mpv media loading timed out. Log: " + logPath, lastError);
     }
 
     private JsonElement getProperty(String property) throws ExternalProcessException {
@@ -836,7 +836,7 @@ public final class MpvController implements AutoCloseable {
 
     private JsonObject send(JsonArray command) throws ExternalProcessException {
         if (closed || !process.isAlive()) {
-            throw new ExternalProcessException("mpv süreci çalışmıyor.");
+            throw new ExternalProcessException("The mpv process is not running.");
         }
         JsonObject request = new JsonObject();
         request.add("command", command);

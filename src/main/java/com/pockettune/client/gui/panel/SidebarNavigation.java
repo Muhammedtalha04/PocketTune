@@ -37,14 +37,14 @@ public final class SidebarNavigation {
         graphics.drawCenteredString(Minecraft.getInstance().font, "PocketTune", centerX,
                 bounds.y() + (compactMode ? 43 : 68), GuiTheme.ACCENT);
         if (!compactMode) {
-            graphics.drawCenteredString(Minecraft.getInstance().font, "HOPARLÖR", centerX,
+            graphics.drawCenteredString(Minecraft.getInstance().font, "SPEAKER", centerX,
                     bounds.y() + 80, GuiTheme.MUTED);
         }
 
         if (compactMode) {
             renderTabs(graphics, mouseX, mouseY);
             graphics.drawCenteredString(Minecraft.getInstance().font,
-                    active ? "● " + status.playbackState() : "● Durdu",
+                    active ? "● " + status.playbackState() : "● Stopped",
                     centerX, bounds.bottom() - 16, active ? GuiTheme.ACCENT : GuiTheme.DANGER);
             return;
         }
@@ -52,11 +52,11 @@ public final class SidebarNavigation {
         // Geniş düzende hızlı eylem tuşları kaldırıldı; tüm işlevler ilgili panellerde tek yerden sunulur.
         int statusY = bounds.y() + 100;
         GuiTheme.section(graphics, bounds.x() + 8, statusY, bounds.width() - 16, 72);
-        graphics.drawString(Minecraft.getInstance().font, active ? "● Hoparlör Aktif" : "● Hoparlör Durdu",
+        graphics.drawString(Minecraft.getInstance().font, active ? "● Speaker Active" : "● Speaker Stopped",
                 bounds.x() + 15, statusY + 8, active ? GuiTheme.ACCENT : GuiTheme.DANGER, false);
         graphics.drawString(Minecraft.getInstance().font, "Chunk: " + status.chunkState(),
                 bounds.x() + 15, statusY + 24, GuiTheme.MUTED, false);
-        graphics.drawString(Minecraft.getInstance().font, "Durum: " + status.playbackState(),
+        graphics.drawString(Minecraft.getInstance().font, "Status: " + status.playbackState(),
                 bounds.x() + 15, statusY + 40, GuiTheme.MUTED, false);
         graphics.drawString(Minecraft.getInstance().font,
                 GuiTheme.ellipsize(Minecraft.getInstance().font, status.position(), bounds.width() - 30),
@@ -98,11 +98,11 @@ public final class SidebarNavigation {
     }
 
     public enum Tab {
-        NOW_PLAYING("Şu An Çalıyor"),
+        NOW_PLAYING("Now Playing"),
         PLAYLIST("Playlist"),
-        AUDIO("Ses Ayarları"),
-        ADVANCED("Gelişmiş"),
-        INFO("Bilgi");
+        AUDIO("Audio Settings"),
+        ADVANCED("Advanced"),
+        INFO("Info");
 
         private final String label;
 

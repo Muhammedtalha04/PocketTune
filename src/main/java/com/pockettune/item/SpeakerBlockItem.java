@@ -20,6 +20,24 @@ public final class SpeakerBlockItem extends BlockItem {
     }
 
     @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        if (slotChanged || !ItemStack.isSameItem(oldStack, newStack)) {
+            return true;
+        }
+        PortableSpeakerState oldState = oldStack.get(ModDataComponents.PORTABLE_SPEAKER_STATE.get());
+        PortableSpeakerState newState = newStack.get(ModDataComponents.PORTABLE_SPEAKER_STATE.get());
+        if (oldState == null && newState == null) {
+            return !ItemStack.isSameItemSameComponents(oldStack, newStack);
+        }
+
+        ItemStack oldComparable = oldStack.copy();
+        ItemStack newComparable = newStack.copy();
+        oldComparable.remove(ModDataComponents.PORTABLE_SPEAKER_STATE.get());
+        newComparable.remove(ModDataComponents.PORTABLE_SPEAKER_STATE.get());
+        return !ItemStack.isSameItemSameComponents(oldComparable, newComparable);
+    }
+
+    @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean selected) {
         super.inventoryTick(stack, level, entity, slotId, selected);
         if (level.isClientSide() || Math.floorMod(level.getGameTime() + slotId, 20L) != 0L) {
@@ -45,18 +63,18 @@ public final class SpeakerBlockItem extends BlockItem {
         super.appendHoverText(stack, context, tooltip, flag);
         PortableSpeakerState state = stack.get(ModDataComponents.PORTABLE_SPEAKER_STATE.get());
         if (state == null || state.playlistQueue().isEmpty()) {
-            tooltip.add(Component.literal("Boş hoparlör").withStyle(ChatFormatting.DARK_GRAY));
+            tooltip.add(Component.literal("Empty speaker").withStyle(ChatFormatting.DARK_GRAY));
             return;
         }
         TrackMetadata active = state.activeTrack();
         tooltip.add(Component.literal(active == null ? "YouTube" : active.title())
                 .withStyle(ChatFormatting.GREEN));
         tooltip.add(Component.literal(
-                        (state.playing() ? state.paused() ? "Duraklatıldı" : "Envanterde çalıyor" : "Durdu")
-                                + " • " + formatTime(state.elapsedMillis()))
+                        (state.playing() ? state.paused() ? "Paused" : "Playing from inventory" : "Stopped")
+                                + " - " + formatTime(state.elapsedMillis()))
                 .withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.literal(
-                        "Sıra " + (state.playlistIndex() + 1) + "/" + state.playlistQueue().size())
+                        "Queue " + (state.playlistIndex() + 1) + "/" + state.playlistQueue().size())
                 .withStyle(ChatFormatting.DARK_GRAY));
     }
 

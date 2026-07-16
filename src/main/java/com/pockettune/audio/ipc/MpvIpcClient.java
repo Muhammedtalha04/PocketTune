@@ -36,7 +36,7 @@ public final class MpvIpcClient {
 
     public synchronized JsonObject request(JsonObject request) throws ExternalProcessException {
         if (!usable) {
-            throw new ExternalProcessException("mpv IPC bağlantısı önceki zaman aşımından sonra kullanılamaz.");
+            throw new ExternalProcessException("The mpv IPC connection is unavailable after a previous timeout.");
         }
         // mpv aynı bağlantıya asenkron event satırları da yazar (start-file, seek, playback-restart...).
         // İlk satırı yanıt saymak yerine request_id eşleşen satır bulunana kadar event'ler atlanır.
@@ -67,7 +67,7 @@ public final class MpvIpcClient {
         String error = response.has("error") ? response.get("error").getAsString() : "unknown";
         if (!"success".equals(error)) {
             throw new ExternalProcessException(
-                    "mpv IPC komutu başarısız " + request.get("command") + ": " + error
+                    "mpv IPC command failed " + request.get("command") + ": " + error
             );
         }
         return response;
@@ -112,16 +112,16 @@ public final class MpvIpcClient {
             for (int lines = 0; lines < MAX_SKIPPED_LINES; lines++) {
                 String line = pipe.readLine();
                 if (line == null) {
-                    throw new ExternalProcessException("mpv IPC bağlantısı yanıt vermeden kapandı.");
+                    throw new ExternalProcessException("The mpv IPC connection closed without a response.");
                 }
                 JsonObject response = matchResponse(line, requestId);
                 if (response != null) {
                     return response;
                 }
             }
-            throw new ExternalProcessException("mpv IPC yanıtı event akışı içinde bulunamadı.");
+            throw new ExternalProcessException("The mpv IPC response was not found in the event stream.");
         } catch (IOException exception) {
-            throw new ExternalProcessException("mpv Windows IPC pipe bağlantısı kurulamadı.", exception);
+            throw new ExternalProcessException("The mpv Windows IPC pipe connection could not be established.", exception);
         } finally {
             if (pipe != null) {
                 activeConnection.compareAndSet(pipe, null);
@@ -171,9 +171,9 @@ public final class MpvIpcClient {
                 }
                 input.clear();
             }
-            throw new ExternalProcessException("mpv IPC yanıtı alınamadı veya çok büyüktü.");
+            throw new ExternalProcessException("The mpv IPC response was not received or was too large.");
         } catch (IOException exception) {
-            throw new ExternalProcessException("mpv Unix IPC socket bağlantısı kurulamadı.", exception);
+            throw new ExternalProcessException("The mpv Unix IPC socket connection could not be established.", exception);
         } finally {
             if (channel != null) {
                 activeConnection.compareAndSet(channel, null);
@@ -205,6 +205,6 @@ public final class MpvIpcClient {
         if (activeConnection.compareAndSet(connection, null)) {
             closeQuietly(connection);
         }
-        throw new ExternalProcessException("mpv IPC isteği süre dolduktan sonra bağlantı kurdu.");
+        throw new ExternalProcessException("The mpv IPC request connected after its deadline.");
     }
 }

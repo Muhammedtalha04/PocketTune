@@ -80,7 +80,7 @@ public final class ThumbnailCache {
     ) {
         HttpRequest request = HttpRequest.newBuilder(URI.create(candidates.get(candidateIndex)))
                 .timeout(Duration.ofSeconds(12))
-                .header("User-Agent", "PocketTune/0.7.0")
+                .header("User-Agent", "PocketTune/0.7.1")
                 .GET()
                 .build();
         HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofInputStream())
@@ -137,13 +137,13 @@ public final class ThumbnailCache {
             NativeImage image = NativeImage.read(bytes);
             if (!isSafeDimensions(image.getWidth(), image.getHeight())) {
                 image.close();
-                throw new IOException("Küçük resim boyut sınırını aşıyor");
+                throw new IOException("The thumbnail exceeds the size limit");
             }
             return image;
         }
         BufferedImage decoded = ImageIO.read(new ByteArrayInputStream(bytes));
         if (decoded == null || !isSafeDimensions(decoded.getWidth(), decoded.getHeight())) {
-            throw new IOException("Desteklenmeyen küçük resim formatı");
+            throw new IOException("Unsupported thumbnail format");
         }
         NativeImage image = new NativeImage(NativeImage.Format.RGBA, decoded.getWidth(), decoded.getHeight(), false);
         for (int y = 0; y < decoded.getHeight(); y++) {

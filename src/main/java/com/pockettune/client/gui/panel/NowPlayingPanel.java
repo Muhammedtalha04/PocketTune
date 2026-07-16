@@ -27,10 +27,10 @@ public final class NowPlayingPanel {
         Font font = Minecraft.getInstance().font;
         int buttonWidth = 86;
         graphics.fill(bounds.right() - buttonWidth - 8, bounds.y() + 8, bounds.right() - 8, bounds.y() + 26, GuiTheme.ROW);
-        graphics.drawCenteredString(font, "URL Değiştir", bounds.right() - buttonWidth / 2 - 8,
+        graphics.drawCenteredString(font, "Change URL", bounds.right() - buttonWidth / 2 - 8,
                 bounds.y() + 13, GuiTheme.TEXT);
         if (track == null) {
-            graphics.drawCenteredString(font, "Çalmak için bir YouTube URL'si ekleyin",
+            graphics.drawCenteredString(font, "Add a YouTube URL to start playing",
                     bounds.x() + bounds.width() / 2, bounds.y() + bounds.height() / 2 - 4, GuiTheme.MUTED);
             return;
         }
@@ -43,7 +43,7 @@ public final class NowPlayingPanel {
 
         int textX = coverX + coverSize + 12;
         int textWidth = bounds.right() - textX - GuiTheme.PADDING;
-        graphics.drawString(font, paused ? "DURAKLATILDI" : playing ? "ŞU AN ÇALAN" : "DURDU",
+        graphics.drawString(font, paused ? "PAUSED" : playing ? "NOW PLAYING" : "STOPPED",
                 textX, coverY + 1, paused ? 0xFFFFC857 : GuiTheme.ACCENT, false);
         graphics.drawString(font, GuiTheme.ellipsize(font, track.title(), textWidth),
                 textX, coverY + 18, GuiTheme.TEXT, false);
@@ -53,7 +53,7 @@ public final class NowPlayingPanel {
                 textX, coverY + 48, GuiTheme.MUTED, false);
         // İlerleme/süre yalnız alt bardaki interaktif seek çubuğunda gösterilir; burada tekrarlanmaz.
         if (track.durationMillis() > 0L) {
-            graphics.drawString(font, "Süre: " + formatTime(track.durationMillis()),
+            graphics.drawString(font, "Duration: " + formatTime(track.durationMillis()),
                     textX, coverY + 64, GuiTheme.MUTED, false);
         }
     }

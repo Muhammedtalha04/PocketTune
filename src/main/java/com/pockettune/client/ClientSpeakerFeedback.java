@@ -42,7 +42,7 @@ public final class ClientSpeakerFeedback {
         minecraft.execute(() -> {
             if (minecraft.player != null) {
                 minecraft.player.displayClientMessage(
-                        Component.literal("[PocketTune] Taşınabilir hoparlör: " + message),
+                        Component.literal("[PocketTune] Portable speaker: " + message),
                         false
                 );
             }

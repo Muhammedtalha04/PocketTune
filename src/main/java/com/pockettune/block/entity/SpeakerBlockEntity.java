@@ -240,15 +240,15 @@ public final class SpeakerBlockEntity extends BlockEntity {
 
     public String getPlaybackStatus() {
         if (!playing || playlistQueue.isEmpty()) {
-            return "Durdu";
+            return "Stopped";
         }
         if (paused) {
-            return "Duraklatıldı";
+            return "Paused";
         }
         if (!startupError.isBlank()) {
-            return "Hata";
+            return "Error";
         }
-        return controller == null ? "Buffering" : "Çalıyor";
+        return controller == null ? "Buffering" : "Playing";
     }
 
     public PortableSpeakerState createPortableState(long gameTime) {
@@ -294,7 +294,7 @@ public final class SpeakerBlockEntity extends BlockEntity {
                 worldPosition,
                 BlockInteractionTracePayload.Stage.CLIENT_PREPARE_RECEIVED,
                 true,
-                "Prepare payload BlockEntity tarafından işlendi"
+                "Prepare payload handled by the BlockEntity"
         );
         portableSpeakerId = speakerId;
         PortableSpeakerState portableState = createPortableState(level.getGameTime());
@@ -327,8 +327,8 @@ public final class SpeakerBlockEntity extends BlockEntity {
                 BlockInteractionTracePayload.Stage.CLIENT_CONTROLLER_DETACHED,
                 true,
                 transferredController == null
-                        ? "Controller yok; item oturumu gerektiğinde başlatacak"
-                        : "Canlı controller kaynak BlockEntity'den ayrıldı"
+                        ? "No controller; the item session will start it when needed"
+                        : "Live controller detached from the source BlockEntity"
         );
     }
 
@@ -849,7 +849,7 @@ public final class SpeakerBlockEntity extends BlockEntity {
         }
         MpvController activeController = controller;
         if (activeController != null && !activeController.isAlive()) {
-            startupError = "Oynatma beklenmedik şekilde durdu; yeniden hazırlanıyor.";
+            startupError = "Playback stopped unexpectedly; preparing it again.";
             detachAndClose(activeController);
             feedbackShown = false;
             activeController = null;
@@ -1029,7 +1029,7 @@ public final class SpeakerBlockEntity extends BlockEntity {
                         if (failure != PlaybackStartupGate.FailureResult.STALE) {
                             startupError = failure == PlaybackStartupGate.FailureResult.TERMINAL
                                     ? PlaybackFailureMessages.forPlayback(exception)
-                                    : "Oynatma hazırlanamadı; otomatik yeniden deneniyor.";
+                                    : "Playback could not be prepared; retrying automatically.";
                         }
                     }
                 }
@@ -1103,7 +1103,7 @@ public final class SpeakerBlockEntity extends BlockEntity {
             ExternalProcessCancellation requestCancellation
     ) {
         ExternalProcessException rejection = new ExternalProcessException(
-                "Oynatma başlatma kuyruğu dolu; istek yeniden denenecek."
+                "The playback startup queue is full; the request will be retried."
         );
         PlaybackStartupGate.FailureResult failure = PlaybackStartupGate.FailureResult.STALE;
         synchronized (audioOwnershipLock) {
@@ -1119,7 +1119,7 @@ public final class SpeakerBlockEntity extends BlockEntity {
                 if (failure != PlaybackStartupGate.FailureResult.STALE) {
                     startupError = failure == PlaybackStartupGate.FailureResult.TERMINAL
                             ? PlaybackFailureMessages.forPlayback(rejection)
-                            : "Oynatma kuyruğu yoğun; otomatik yeniden deneniyor.";
+                            : "The playback queue is busy; retrying automatically.";
                 }
             }
         }
@@ -1236,8 +1236,8 @@ public final class SpeakerBlockEntity extends BlockEntity {
                                 ? SpeakerOperationFeedbackPayload.State.SUCCESS
                                 : SpeakerOperationFeedbackPayload.State.ERROR,
                         startupError.isBlank()
-                                ? "Hoparlör çalmaya başladı."
-                                : "Hoparlör hatası: " + startupError
+                                ? "Speaker playback started."
+                                : "Speaker error: " + startupError
                 ),
                 player
         );

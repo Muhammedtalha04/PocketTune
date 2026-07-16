@@ -13,29 +13,29 @@ final class PlaybackFailureMessagesTest {
             "https://googlevideo.example/videoplayback?expire=999&sig=secret-token";
 
     @Test
-    void mapsExplicitFailureKindsToClearTurkishMessages() {
+    void mapsExplicitFailureKindsToClearEnglishMessages() {
         assertEquals(
-                "Sunucuda yt-dlp bulunamadı. Sunucu yöneticisi araç kurulumunu kontrol etmeli.",
+                "yt-dlp was not found on the server. Ask the server administrator to check the installation.",
                 PlaybackFailureMessages.forPlaylistResolution(failure(
                         ExternalProcessException.FailureKind.TOOL_MISSING))
         );
         assertEquals(
-                "YouTube'a bağlanılamadı. İnternet bağlantısını kontrol edip tekrar deneyin.",
+                "Could not connect to YouTube. Check the internet connection and try again.",
                 PlaybackFailureMessages.forPlaylistResolution(failure(
                         ExternalProcessException.FailureKind.NETWORK))
         );
         assertEquals(
-                "YouTube yanıt vermedi. Lütfen biraz sonra tekrar deneyin.",
+                "YouTube did not respond in time. Please try again later.",
                 PlaybackFailureMessages.forPlaylistResolution(failure(
                         ExternalProcessException.FailureKind.TIMEOUT))
         );
         assertEquals(
-                "Video veya playlist kullanılamıyor, gizli ya da erişim kısıtlı olabilir.",
+                "The video or playlist is unavailable, private or restricted.",
                 PlaybackFailureMessages.forPlaylistResolution(failure(
                         ExternalProcessException.FailureKind.MEDIA_UNAVAILABLE))
         );
         assertEquals(
-                "Aynı anda çalabilecek yerel ses sınırına ulaşıldı. Bir hoparlörü durdurun veya istemci ayarındaki sınırı artırın.",
+                "The concurrent local-audio limit was reached. Stop a speaker or increase the client limit.",
                 PlaybackFailureMessages.forPlayback(failure(
                         ExternalProcessException.FailureKind.CAPACITY))
         );
@@ -58,7 +58,7 @@ final class PlaybackFailureMessagesTest {
                 PlaybackFailureMessages.category(exception)
         );
         assertEquals(
-                "YouTube yanıt vermedi. Lütfen biraz sonra tekrar deneyin.",
+                "YouTube did not respond in time. Please try again later.",
                 PlaybackFailureMessages.forPlaylistResolution(exception)
         );
     }
@@ -92,7 +92,7 @@ final class PlaybackFailureMessagesTest {
         );
 
         assertEquals(
-                "Geçerli bir YouTube video veya playlist URL'si girin.",
+                "Enter a valid YouTube video or playlist URL.",
                 PlaybackFailureMessages.forUrlInput(exception)
         );
     }
@@ -108,7 +108,7 @@ final class PlaybackFailureMessagesTest {
         String message = PlaybackFailureMessages.forThrowable(new CompletionException(external));
 
         assertEquals(
-                "YouTube'a bağlanılamadı. İnternet bağlantısını kontrol edip tekrar deneyin.",
+                "Could not connect to YouTube. Check the internet connection and try again.",
                 message
         );
         assertFalse(message.contains("secret-token"));

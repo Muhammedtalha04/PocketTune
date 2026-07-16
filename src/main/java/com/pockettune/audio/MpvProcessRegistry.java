@@ -77,12 +77,12 @@ public final class MpvProcessRegistry {
     ) {
         if (rejection == ProcessLifecycleRegistry.RejectionReason.CAPACITY) {
             return new ExternalProcessException(
-                    "PocketTune eşzamanlı yerel ses sınırına ulaştı (" + limit + ").",
+                    "PocketTune reached the concurrent local-audio limit (" + limit + ").",
                     ExternalProcessException.FailureKind.CAPACITY
             );
         }
         return new ExternalProcessException(
-                "mpv başlangıcı eski veya kapanmış bir PocketTune oturumuna ait olduğu için iptal edildi.",
+                "mpv startup was cancelled because it belongs to an expired PocketTune session.",
                 ExternalProcessException.FailureKind.CANCELLED
         );
     }

@@ -32,9 +32,9 @@ public final class PlaylistResolutionService {
     private static final long PLAYER_RATE_WINDOW_NANOS = TimeUnit.SECONDS.toNanos(10L);
     private static final long BUSY_FEEDBACK_COOLDOWN_NANOS = TimeUnit.SECONDS.toNanos(2L);
     private static final String QUEUE_FULL_MESSAGE =
-            "Sunucunun medya çözümleme kuyruğu dolu. Lütfen biraz sonra tekrar deneyin.";
+            "The server media-resolution queue is full. Please try again shortly.";
     private static final String UNEXPECTED_FAILURE_MESSAGE =
-            "Medya çözümleme işlemi beklenmeyen bir hatayla durdu. Lütfen tekrar deneyin.";
+            "Media resolution stopped because of an unexpected error. Please try again.";
 
     private static final SessionRuntimeRegistry<MinecraftServer, ServerRuntime> RUNTIMES =
             new SessionRuntimeRegistry<>(ServerRuntime::new, ServerRuntime::shutdown);
@@ -278,15 +278,15 @@ public final class PlaylistResolutionService {
             if (!runtime.shouldReportBusy(requester.getUUID(), nowNanos)) {
                 return null;
             }
-            message = "Bu hoparlör için başka bir medya çözümleme işlemi devam ediyor.";
+            message = "Another media-resolution operation is already running for this speaker.";
         } else {
             long seconds = Math.max(
                     1L,
                     (decision.retryAfterNanos() + TimeUnit.SECONDS.toNanos(1L) - 1L)
                             / TimeUnit.SECONDS.toNanos(1L)
             );
-            message = "Çok fazla medya çözümleme isteği gönderdiniz. "
-                    + seconds + " saniye sonra tekrar deneyin.";
+            message = "Too many media-resolution requests were sent. Try again in "
+                    + seconds + " seconds.";
         }
         ModNetworking.sendOperationFeedback(
                 requester,
@@ -340,7 +340,7 @@ public final class PlaylistResolutionService {
                     requester,
                     pos,
                     SpeakerOperationFeedbackPayload.State.SUCCESS,
-                    tracks.size() + " parçalık sıra hazır; oynatma başladı."
+                    "The " + tracks.size() + "-track queue is ready; playback started."
             );
         }
     }
@@ -406,13 +406,13 @@ public final class PlaylistResolutionService {
         }
         if (decision == SpeakerBlockEntity.TrackResultDecision.SKIPPED_UNAVAILABLE) {
             ModNetworking.sendOperationFeedback(requester, pos, SpeakerOperationFeedbackPayload.State.ERROR,
-                    "Sunucu kullanılamayan parçayı doğruladı; sıradaki parça açılıyor.");
+                    "The server confirmed the unavailable track; opening the next track.");
         } else if (decision == SpeakerBlockEntity.TrackResultDecision.STOPPED_ALL_UNAVAILABLE) {
             ModNetworking.sendOperationFeedback(requester, pos, SpeakerOperationFeedbackPayload.State.ERROR,
-                    "Sunucu sıradaki hiçbir parçayı oynatamadığı için hoparlör durduruldu.");
+                    "The speaker stopped because the server could not play any remaining track.");
         } else if (!confirmedUnavailable) {
             ModNetworking.sendOperationFeedback(requester, pos, SpeakerOperationFeedbackPayload.State.ERROR,
-                    "Parça sunucuda kullanılabilir; yalnızca bu istemcide oynatma başarısız oldu.");
+                    "The track is available on the server; playback failed only on this client.");
         }
     }
 
@@ -442,7 +442,7 @@ public final class PlaylistResolutionService {
                     requester,
                     pos,
                     SpeakerOperationFeedbackPayload.State.ERROR,
-                    "Parça doğrulanamadı; sıra değiştirilmedi. " + error
+                    "The track could not be verified; the queue was not changed. " + error
             );
         }
     }

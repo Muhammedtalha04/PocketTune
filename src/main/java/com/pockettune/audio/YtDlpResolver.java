@@ -85,10 +85,10 @@ public final class YtDlpResolver {
 
         if (result.exitCode() != 0) {
             String details = result.stderr().isBlank()
-                    ? "Bilinmeyen yt-dlp hatası."
+                    ? "Unknown yt-dlp error."
                     : summarizeError(result.stderr());
             throw new ExternalProcessException(
-                    "yt-dlp stream URL'sini çözemedi: " + details,
+                    "yt-dlp could not resolve the stream URL: " + details,
                     ExternalProcessException.FailureKind.MEDIA_UNAVAILABLE
             );
         }
@@ -98,7 +98,7 @@ public final class YtDlpResolver {
                 .filter(line -> line.startsWith("https://") || line.startsWith("http://"))
                 .findFirst()
                 .orElseThrow(() -> new ExternalProcessException(
-                        "yt-dlp geçerli bir ses stream URL'si döndürmedi.",
+                        "yt-dlp did not return a valid audio stream URL.",
                         ExternalProcessException.FailureKind.MEDIA_UNAVAILABLE
                 ));
     }
@@ -133,18 +133,18 @@ public final class YtDlpResolver {
         );
         if (result.exitCode() != 0) {
             String details = result.stderr().isBlank()
-                    ? "Bilinmeyen yt-dlp hatası."
+                    ? "Unknown yt-dlp error."
                     : summarizeError(result.stderr());
-            throw new ExternalProcessException("yt-dlp playlist'i çözemedi: " + details);
+            throw new ExternalProcessException("yt-dlp could not resolve the playlist: " + details);
         }
 
         List<TrackMetadata> tracks = parsePlaylistTracks(result.stdout());
         if (tracks.isEmpty()) {
-            throw new ExternalProcessException("YouTube URL'sinde oynatılabilir parça bulunamadı.");
+            throw new ExternalProcessException("No playable track was found at the YouTube URL.");
         }
         if (tracks.size() > MAX_PLAYLIST_ENTRIES) {
             throw new ExternalProcessException(
-                    "Playlist en fazla " + MAX_PLAYLIST_ENTRIES + " parça içerebilir."
+                    "A playlist can contain at most " + MAX_PLAYLIST_ENTRIES + " tracks."
             );
         }
         return List.copyOf(tracks);
@@ -168,7 +168,7 @@ public final class YtDlpResolver {
             }
             return tracks;
         } catch (RuntimeException exception) {
-            throw new ExternalProcessException("yt-dlp geçersiz playlist metadata çıktısı döndürdü.", exception);
+            throw new ExternalProcessException("yt-dlp returned invalid playlist metadata.", exception);
         }
     }
 
@@ -205,7 +205,7 @@ public final class YtDlpResolver {
 
     public static String videoUrl(String videoId) throws ExternalProcessException {
         if (!isValidVideoId(videoId)) {
-            throw invalidInput("Geçersiz YouTube video kimliği.");
+            throw invalidInput("Invalid YouTube video ID.");
         }
         return "https://www.youtube.com/watch?v=" + videoId;
     }
@@ -269,7 +269,7 @@ public final class YtDlpResolver {
                 return new ToolVersion(true, result.stdout().lines().findFirst().orElse("unknown"));
             }
             String details = result.stderr().isBlank()
-                    ? "yt-dlp sürüm denetimi başarısız oldu (çıkış kodu " + result.exitCode() + ")."
+                    ? "The yt-dlp version check failed (exit code " + result.exitCode() + ")."
                     : summarizeError(result.stderr());
             return new ToolVersion(false, "", details);
         } catch (ExternalProcessException exception) {
@@ -285,12 +285,12 @@ public final class YtDlpResolver {
 
     public static String validateYoutubeUrl(String rawUrl) throws ExternalProcessException {
         if (rawUrl == null) {
-            throw invalidInput("YouTube URL'si boş olamaz.");
+            throw invalidInput("The YouTube URL cannot be empty.");
         }
 
         String url = rawUrl.trim();
         if (url.isEmpty() || url.length() > MAX_URL_LENGTH) {
-            throw invalidInput("YouTube URL'si boş veya çok uzun.");
+            throw invalidInput("The YouTube URL is empty or too long.");
         }
 
         try {
@@ -299,7 +299,7 @@ public final class YtDlpResolver {
             String host = uri.getHost();
             int port = uri.getPort();
             if (scheme == null || host == null || uri.getUserInfo() != null) {
-                throw invalidInput("Geçerli bir YouTube URL'si girin.");
+                throw invalidInput("Enter a valid YouTube URL.");
             }
 
             String normalizedScheme = scheme.toLowerCase(Locale.ROOT);
@@ -314,14 +314,14 @@ public final class YtDlpResolver {
             boolean validPort = port == -1 || port == 443;
 
             if (!validScheme || !validHost || !validPort) {
-                throw invalidInput("Yalnızca güvenli YouTube video ve playlist URL'leri destekleniyor.");
+                throw invalidInput("Only secure YouTube video and playlist URLs are supported.");
             }
 
             URI asciiUri = new URI(uri.toASCIIString());
             String rawPath = asciiUri.getRawPath();
             String rawQuery = sanitizeQuery(asciiUri.getRawQuery());
             if (!isSupportedMediaShape(normalizedHost, rawPath, rawQuery)) {
-                throw invalidInput("Geçerli bir YouTube video veya playlist URL'si girin.");
+                throw invalidInput("Enter a valid YouTube video or playlist URL.");
             }
             StringBuilder sanitized = new StringBuilder("https://").append(normalizedHost);
             if (rawPath != null && !rawPath.isEmpty()) {
@@ -333,12 +333,12 @@ public final class YtDlpResolver {
             // Fragmentler ve bilinen paylaşım/takip parametreleri kalıcı state'e hiç girmez.
             String asciiUrl = sanitized.toString();
             if (asciiUrl.length() > MAX_URL_LENGTH) {
-                throw invalidInput("YouTube URL'si boş veya çok uzun.");
+                throw invalidInput("The YouTube URL is empty or too long.");
             }
             return asciiUrl;
         } catch (URISyntaxException exception) {
             throw new ExternalProcessException(
-                    "Geçersiz YouTube URL'si.",
+                    "Invalid YouTube URL.",
                     exception,
                     ExternalProcessException.FailureKind.INVALID_INPUT
             );

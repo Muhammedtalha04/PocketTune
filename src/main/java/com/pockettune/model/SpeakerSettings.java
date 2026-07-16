@@ -49,9 +49,9 @@ public record SpeakerSettings(
     }
 
     public enum FadeType {
-        LINEAR("Doğrusal"),
-        QUADRATIC("Kare (Yumuşak)"),
-        LOGARITHMIC("Logaritmik");
+        LINEAR("Linear"),
+        QUADRATIC("Quadratic (Smooth)"),
+        LOGARITHMIC("Logarithmic");
 
         private final String displayName;
 
@@ -65,9 +65,9 @@ public record SpeakerSettings(
     }
 
     public enum RepeatMode {
-        OFF("Kapalı"),
-        ALL("Tümü"),
-        ONE("Tek Parça");
+        OFF("Off"),
+        ALL("All"),
+        ONE("One Track");
 
         private final String displayName;
 

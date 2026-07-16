@@ -5,6 +5,7 @@
 **A synchronized YouTube speaker and portable music player for Minecraft.**
 
 [![Build](https://github.com/Muhammedtalha04/PocketTune/actions/workflows/build.yml/badge.svg)](https://github.com/Muhammedtalha04/PocketTune/actions/workflows/build.yml)
+[![Release](https://img.shields.io/github/v/release/Muhammedtalha04/PocketTune?color=72c900)](https://github.com/Muhammedtalha04/PocketTune/releases)
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.21.4-62b47a?logo=minecraft)](https://www.minecraft.net/)
 [![NeoForge](https://img.shields.io/badge/NeoForge-21.4-orange)](https://neoforged.net/)
 [![Java](https://img.shields.io/badge/Java-21-ed8b00?logo=openjdk)](https://adoptium.net/)
@@ -17,7 +18,9 @@
 
 PocketTune adds a server-authoritative speaker block with synchronized playlists, spatial audio, a responsive media-player GUI and portable inventory playback. It resolves supported YouTube links with `yt-dlp` and plays audio through `mpv`; no browser, API key or paid service is required.
 
-![PocketTune player screen](docs/images/player-screen.png)
+<p align="center">
+  <img src="docs/images/player-screen.png" alt="PocketTune English player interface with playlist, cover art and spatial audio controls" width="100%">
+</p>
 
 ## ✨ Features
 
@@ -33,9 +36,26 @@ PocketTune adds a server-authoritative speaker block with synchronized playlists
 - Native NeoForge config screens plus opt-in spatial and block-interaction diagnostics
 - Bounded external processes, queues, caches, packet validation and privacy-safe logs
 
+## 📸 In-game gallery
+
 <p align="center">
-  <img src="docs/images/spatial-settings.png" alt="Spatial audio settings" width="520">
+  <img src="docs/images/portable-overlay-sunset.png" alt="PocketTune now-playing overlay during a Minecraft sunset" width="100%">
+  <br>
+  <sub>Compact now-playing overlay with cover art, artist, playback state and progress.</sub>
 </p>
+
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <img src="docs/images/portable-speaker-night.png" alt="Portable PocketTune speaker held at night with the music overlay">
+      <br><sub>Portable playback keeps the music and metadata with the speaker.</sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="docs/images/config-screen.png" alt="PocketTune English configuration screen">
+      <br><sub>English configuration for audio, overlays, test mode and block diagnostics.</sub>
+    </td>
+  </tr>
+</table>
 
 ## 📦 Compatibility and runtime requirements
 
@@ -52,7 +72,7 @@ PocketTune accepts supported HTTPS YouTube video and playlist URLs. The server o
 
 1. Install NeoForge 21.4.x for Minecraft 1.21.4.
 2. Install current versions of [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) and [`mpv`](https://mpv.io/installation/) and make them available on `PATH`.
-3. Put `pockettune-0.7.0.jar` in the Minecraft `mods` folder, then start Minecraft.
+3. Put `pockettune-0.7.1.jar` in the Minecraft `mods` folder, then start Minecraft.
 4. Place a PocketTune speaker and right-click normally to open it. Sneak + right-click picks it up without losing its state.
 5. Add a supported YouTube video/playlist URL from the GUI and control the queue, sound and spatial settings there.
 
@@ -86,7 +106,7 @@ Then build the production JAR:
 ./gradlew clean build --no-daemon
 ```
 
-Output: `build/libs/pockettune-0.7.0.jar`. Detailed workflows live in [DEVELOPMENT.md](DEVELOPMENT.md).
+Output: `build/libs/pockettune-0.7.1.jar`. Detailed workflows live in [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## 🤖 AI-assisted development
 

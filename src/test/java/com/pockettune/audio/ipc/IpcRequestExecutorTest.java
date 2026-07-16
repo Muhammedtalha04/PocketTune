@@ -36,7 +36,7 @@ final class IpcRequestExecutorTest {
         long elapsedMillis = Duration.ofNanos(System.nanoTime() - startedAt).toMillis();
         assertTrue(aborted.get());
         assertTrue(elapsedMillis < 1_000L, "deadline took " + elapsedMillis + " ms");
-        assertTrue(exception.getMessage().contains("zaman aşımına"));
+        assertTrue(exception.getMessage().contains("timed out"));
     }
 
     @Test

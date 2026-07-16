@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 final class ExternalToolDiagnosticsTest {
     @Test
     void explicitOverrideFailureRemainsVisibleToThePlayer() {
-        String configError = "pockettune-common.toml içindeki 'externalTools.mpvPathOverride' geçersiz: "
-                + "'C:/missing/mpv.exe' (dosya bulunamadı).";
+        String configError = "The 'externalTools.mpvPathOverride' value in pockettune-common.toml is invalid: "
+                + "'C:/missing/mpv.exe' (file not found).";
         ExternalToolDiagnostics.ToolStatus status = new ExternalToolDiagnostics.ToolStatus(
                 true,
                 "2026.01.01",

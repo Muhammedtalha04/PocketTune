@@ -87,8 +87,8 @@ public final class PlaylistPanel {
 
         if (tracks.isEmpty()) {
             int centerX = bounds.x() + bounds.width() / 2;
-            graphics.drawCenteredString(font, "Henüz sırada parça yok", centerX, viewportTop + 22, GuiTheme.TEXT);
-            graphics.drawCenteredString(font, "Şarkı veya playlist eklemek için + Ekle'yi kullanın",
+            graphics.drawCenteredString(font, "The queue is empty", centerX, viewportTop + 22, GuiTheme.TEXT);
+            graphics.drawCenteredString(font, "Use + Add to add a track or playlist",
                     centerX, viewportTop + 38, GuiTheme.MUTED);
         }
 
@@ -138,7 +138,7 @@ public final class PlaylistPanel {
             graphics.fill(bounds.x() + 8, rowY, bounds.x() + 10, rowY + ROW_HEIGHT - 2, GuiTheme.ACCENT);
             graphics.fill(bounds.right() - 10, rowY, bounds.right() - 8,
                     rowY + ROW_HEIGHT - 2, GuiTheme.ACCENT);
-            graphics.drawString(font, "TUTULDU", bounds.right() - font.width("TUTULDU") - 18,
+            graphics.drawString(font, "HELD", bounds.right() - font.width("HELD") - 18,
                     rowY + 5, GuiTheme.ACCENT, false);
         }
     }
@@ -158,7 +158,7 @@ public final class PlaylistPanel {
         int textX = left + 64;
         graphics.drawString(font, GuiTheme.ellipsize(font, track.title(), right - textX - 16),
                 textX, previewY + 8, GuiTheme.TEXT, false);
-        graphics.drawString(font, "Sürükleniyor • bırakmak için sol tuşu bırakın",
+        graphics.drawString(font, "Dragging • release the left button to drop",
                 textX, previewY + 22, GuiTheme.ACCENT, false);
     }
 
@@ -177,7 +177,7 @@ public final class PlaylistPanel {
         graphics.fill(left, lineY - 4, left + 4, lineY + 4, GuiTheme.ACCENT);
         graphics.fill(right - 4, lineY - 4, right, lineY + 4, GuiTheme.ACCENT);
         Font font = Minecraft.getInstance().font;
-        String label = "Buraya bırak • sıra " + Math.min(tracks.size(), dragDropSlot + 1);
+        String label = "Drop here • position " + Math.min(tracks.size(), dragDropSlot + 1);
         int labelWidth = font.width(label) + 10;
         int labelX = Math.max(left + 6, right - labelWidth - 6);
         int labelY = lineY <= viewportTop + 10 ? lineY + 4 : lineY - 13;
@@ -192,7 +192,7 @@ public final class PlaylistPanel {
             SpeakerSettings settings,
             Runnable addUrl
     ) {
-        String[] labels = {"+ Şarkı / Playlist Ekle", "Karıştır", "Tekrar"};
+        String[] labels = {"+ Add Track / Playlist", "Shuffle", "Repeat"};
         int footerY = bounds.bottom() - FOOTER_HEIGHT + 7;
         int buttonGap = 6;
         int buttonWidth = Math.max(1, (bounds.width() - 20 - (labels.length - 1) * buttonGap) / labels.length);
@@ -210,7 +210,7 @@ public final class PlaylistPanel {
             if (hovered) {
                 graphics.fill(x + 1, footerY + 1, x + width - 1, footerY + 2, GuiTheme.ACCENT);
             }
-            String label = index == 2 ? "Tekrar: " + settings.repeatMode().displayName() : labels[index];
+            String label = index == 2 ? "Repeat: " + settings.repeatMode().displayName() : labels[index];
             label = GuiTheme.ellipsize(font, label, width - 10);
             graphics.drawCenteredString(font, label, x + width / 2, footerY + 8, GuiTheme.TEXT);
         }
@@ -384,12 +384,12 @@ public final class PlaylistPanel {
     }
 
     private enum ContextAction {
-        PLAY_NOW("Şimdi Çal"),
-        PLAY_NEXT("Sıradaki Olarak Çal"),
-        COPY_URL("URL'yi Kopyala"),
-        REMOVE("Kaldır"),
-        MOVE_TOP("En Üste Taşı"),
-        MOVE_BOTTOM("En Alta Taşı");
+        PLAY_NOW("Play Now"),
+        PLAY_NEXT("Play Next"),
+        COPY_URL("Copy URL"),
+        REMOVE("Remove"),
+        MOVE_TOP("Move to Top"),
+        MOVE_BOTTOM("Move to Bottom");
 
         private final String label;
 

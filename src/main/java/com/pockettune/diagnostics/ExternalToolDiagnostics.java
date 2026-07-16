@@ -72,8 +72,8 @@ public final class ExternalToolDiagnostics {
         }
 
         private static String failureMessage(String tool, String details, String installUrl) {
-            String reason = details.isBlank() ? tool + " bulunamadı." : details;
-            return reason + " Kurulum: " + installUrl;
+            String reason = details.isBlank() ? tool + " was not found." : details;
+            return reason + " Installation: " + installUrl;
         }
 
         private static String safe(String value) {
